@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440" role="img" aria-labelledby="title desc">
+  <title id="title">XXZF 隐私特点宣传卡</title><desc id="desc">知道有事，不把聊天正文放上大屏</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#081c18"/><stop offset=".62" stop-color="#12243e"/><stop offset="1" stop-color="#211938"/></linearGradient></defs>
+  <rect width="1080" height="1440" fill="url(#bg)"/><circle cx="900" cy="160" r="280" fill="#58e6ae" opacity=".1"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="80" y="176" fill="#4ae6aa" font-size="32" font-weight="800">XXZF · 隐私显示</text><text x="80" y="320" fill="#ffffff" font-size="88" font-weight="850">知道有事</text><text x="80" y="430" fill="#ffffff" font-size="88" font-weight="850">不暴露正文</text><text x="80" y="515" fill="#b9cadb" font-size="34">电脑或 iPhone 上只看到必要提醒</text>
+    <g transform="translate(80 630)">
+      <rect width="920" height="330" rx="42" fill="#ffffff" opacity=".09" stroke="#ffffff" stroke-opacity=".18" stroke-width="2"/><rect x="58" y="61" width="84" height="84" rx="24" fill="#36d691"/><path d="M82 89h36M82 109h48M82 129h29" stroke="#08271e" stroke-width="8" stroke-linecap="round"/><text x="178" y="105" fill="#ffffff" font-size="38" font-weight="800">微信 · 新消息</text><text x="178" y="155" fill="#94a9bf" font-size="29">内容已隐藏</text><line x1="58" y1="194" x2="862" y2="194" stroke="#ffffff" stroke-opacity=".12" stroke-width="2"/>
+      <g transform="translate(58 230)"><circle cx="22" cy="22" r="22" fill="#49dea4"/><path d="M12 22l7 7 14-16" fill="none" stroke="#06241b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><text x="62" y="31" fill="#d7e4f2" font-size="29">知道哪个 App 来了消息</text></g>
+    </g>
+    <g transform="translate(80 1040)"><rect width="920" height="190" rx="34" fill="#42dd9f" opacity=".12" stroke="#4be6aa" stroke-opacity=".42" stroke-width="2"/><text x="55" y="70" fill="#53e8ae" font-size="29" font-weight="800">默认策略</text><text x="55" y="121" fill="#e4fff4" font-size="34" font-weight="750">来源 App + 通知标题</text><text x="55" y="163" fill="#a8c1b7" font-size="27">原始正文不作为 Bark 消息正文发送</text></g>
+    <text x="80" y="1344" fill="#8fa6be" font-size="27">开源 · 自托管 · 转发哪些 App 由你选择</text>
+  </g>
+</svg>

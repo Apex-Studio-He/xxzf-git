@@ -2,7 +2,7 @@
 
 ![XXZF forwards Android notifications to Mac, Windows, and iPhone](docs/images/xxzf-hero.svg)
 
-[中文](README.md) · [Codex-assisted build](CODEX.md) · [Deployment](docs/deployment.en.md) · [Configuration](docs/configuration.en.md) · [Security](SECURITY.md)
+[中文](README.md) · [Codex-assisted build](CODEX.md) · [Deployment](docs/deployment.en.md) · [Configuration](docs/configuration.en.md) · [Security](SECURITY.md) · [Support](SUPPORT.md)
 
 **Keep an eye on your Android notifications from the screen you already use.** XXZF forwards notifications selected by the user through a self-hosted HTTPS service to macOS, Windows, or an iPhone through Bark. Its privacy-friendly presentation sends the source app and notification title without exposing the original body on another screen.
 

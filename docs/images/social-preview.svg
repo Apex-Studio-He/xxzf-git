@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">XXZF 开源通知转发</title>
+  <desc id="desc">将 Android 通知安全转发到 Mac、Windows 和 iPhone</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#061915"/><stop offset=".52" stop-color="#10243d"/><stop offset="1" stop-color="#281944"/></linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#43e5a4"/><stop offset="1" stop-color="#79b8ff"/></linearGradient>
+    <radialGradient id="halo"><stop offset="0" stop-color="#59edb4" stop-opacity=".35"/><stop offset="1" stop-color="#59edb4" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#background)"/>
+  <circle cx="1085" cy="92" r="255" fill="url(#halo)"/>
+  <circle cx="910" cy="590" r="260" fill="#766dff" opacity=".09"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <g transform="translate(72 68)"><rect width="186" height="46" rx="23" fill="#ffffff" opacity=".1"/><circle cx="24" cy="23" r="7" fill="#46e5a6"/><text x="106" y="30" fill="#d9fff0" font-size="18" text-anchor="middle" font-weight="750" letter-spacing="1">OPEN SOURCE</text></g>
+    <text x="72" y="216" fill="#ffffff" font-size="82" font-weight="850">XXZF · 转发</text>
+    <text x="72" y="287" fill="#65e0bc" font-size="39" font-weight="750">安卓通知，不再困在另一台手机里</text>
+    <text x="72" y="348" fill="#cbd8e8" font-size="25">安全转发到 Mac、Windows 和 iPhone（Bark）</text>
+    <g transform="translate(72 414)"><rect width="170" height="56" rx="18" fill="#42d99d"/><text x="85" y="36" fill="#05251c" font-size="21" text-anchor="middle" font-weight="800">自己部署</text><rect x="188" width="196" height="56" rx="18" fill="#ffffff" opacity=".1"/><text x="286" y="36" fill="#ffffff" font-size="21" text-anchor="middle" font-weight="700">正文默认不转发</text><rect x="402" width="170" height="56" rx="18" fill="#ffffff" opacity=".1"/><text x="487" y="36" fill="#ffffff" font-size="21" text-anchor="middle" font-weight="700">完整源码</text></g>
+    <text x="72" y="548" fill="#92a8c1" font-size="19">Android · macOS · Windows · Bark · Python</text>
+    <g transform="translate(812 114)">
+      <rect x="0" y="60" width="145" height="286" rx="34" fill="#0d1726" stroke="#57e6ad" stroke-width="4"/><rect x="13" y="103" width="119" height="184" rx="15" fill="#182f43"/><rect x="31" y="132" width="83" height="59" rx="13" fill="#24485c"/><circle cx="48" cy="151" r="8" fill="#51e3aa"/><path d="M64 148h34M42 171h61" stroke="#d9fff1" stroke-width="6" stroke-linecap="round"/><circle cx="72.5" cy="318" r="8" fill="#57e6ad"/>
+      <path d="M162 201h65" stroke="#60e3af" stroke-width="7" stroke-linecap="round"/><path d="M211 184l20 17-20 17" fill="none" stroke="#60e3af" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <g transform="translate(245 0)"><rect width="177" height="124" rx="23" fill="#172d46" stroke="#7bbcff" stroke-width="4"/><rect x="17" y="18" width="143" height="76" rx="10" fill="#274660"/><path d="M58 147h61M88 125v22" stroke="#7bbcff" stroke-width="7" stroke-linecap="round"/></g>
+      <g transform="translate(271 202)"><rect width="125" height="247" rx="30" fill="#101a2a" stroke="#c6a6ff" stroke-width="4"/><rect x="13" y="43" width="99" height="154" rx="14" fill="#262e50"/><rect x="28" y="66" width="69" height="68" rx="13" fill="#343b68"/><path d="M43 88h39M43 107h27" stroke="#e6dcff" stroke-width="6" stroke-linecap="round"/><circle cx="62.5" cy="222" r="8" fill="#c6a6ff"/></g>
+    </g>
+  </g>
+</svg>

@@ -9,7 +9,14 @@
   <a href="CODEX.md">Codex 小白构建</a> ·
   <a href="docs/部署指南.md">部署指南</a> ·
   <a href="docs/配置参考.md">配置参考</a> ·
-  <a href="SECURITY.md">安全策略</a>
+  <a href="SECURITY.md">安全策略</a> ·
+  <a href="SUPPORT.md">获取帮助</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Apex-Studio-He/xxzf-git/actions/workflows/ci.yml"><img src="https://github.com/Apex-Studio-He/xxzf-git/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  · <a href="https://github.com/Apex-Studio-He/xxzf-git/releases">版本发布</a>
+  · <a href="LICENSE">MIT License</a>
 </p>
 
 ## 先说人话：它是干嘛的？
@@ -19,6 +26,8 @@
 XXZF 可以把 Android 上的通知送到这些设备。比如快递、外卖、短信、设备告警，不用一会儿看这台、一会儿看那台。
 
 它不是公共“中转站”，而是一套可自己部署的完整源码：服务地址由你填，设备由你配对，转发哪些 App 也由你选。
+
+> **30 秒判断适不适合你：** 有自己的服务器、NAS 或长期在线的 Mac，并愿意配置域名和 HTTPS，就可以继续；如果只想下载一个 App 直接使用，这个源码项目目前并不适合。
 
 ### 你会得到什么
 
@@ -190,8 +199,11 @@ Windows 在 Windows PowerShell 中运行：
 - [小白部署指南](docs/部署指南.md)：把服务端、HTTPS、Bark 页和客户端连成一套。
 - [配置参考](docs/配置参考.md)：环境变量、签名材料、更新发布和真机验收。
 - [完整源码清单](docs/源码清单.md)：每个功能的源码在哪里、用什么测试验证。
+- [宣传素材包](docs/宣传素材包.md)：真机演示分镜、平台文案和可直接使用的宣传图。
 - [安全策略](SECURITY.md)：数据边界、部署责任和漏洞报告。
+- [获取帮助](SUPPORT.md)：该去 Discussions、Issues 还是私密安全报告。
 - [贡献指南](CONTRIBUTING.md)：提交修复或新功能前的检查项。
+- [更新记录](CHANGELOG.md)：公开源码版本的变化与发布边界。
 
 ## 许可证
 
