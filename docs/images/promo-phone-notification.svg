@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="104" height="56" viewBox="0 0 104 56" role="img" aria-labelledby="title desc">
+  <title id="title">iPhone 通知卡片</title><desc id="desc">微信新消息</desc>
+  <rect x="1" y="1" width="102" height="54" rx="13" fill="#292d49" stroke="#514f75" stroke-width="2"/>
+  <rect x="9" y="10" width="34" height="34" rx="10" fill="#40dc9c"/><path d="M18 21h17M18 28h19M18 35h13" stroke="#07261d" stroke-width="3" stroke-linecap="round"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"><text x="50" y="25" fill="#f5f2ff" font-size="11" font-weight="800">微信</text><text x="50" y="40" fill="#aba3c7" font-size="9">新消息</text></g>
+</svg>

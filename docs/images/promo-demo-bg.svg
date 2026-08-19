@@ -1,50 +1,62 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
-  <title id="title">XXZF 通知流转动画背景</title>
-  <desc id="desc">Android 通知经过自建服务转发到电脑与 iPhone</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">XXZF 通知流转产品动画背景</title>
+  <desc id="desc">Android 通知经过自建 XXZF 服务，到达电脑与 iPhone</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#061915"/><stop offset=".52" stop-color="#10243d"/><stop offset="1" stop-color="#281944"/></linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050b12"/><stop offset=".55" stop-color="#0b1424"/><stop offset="1" stop-color="#141329"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#18283a" stop-opacity=".92"/><stop offset="1" stop-color="#111a2d" stop-opacity=".86"/></linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f2433"/><stop offset="1" stop-color="#19213b"/></linearGradient>
   </defs>
-  <rect width="1280" height="720" fill="url(#bg)"/>
-  <circle cx="1090" cy="80" r="240" fill="#57e5ad" opacity=".09"/><circle cx="770" cy="710" r="310" fill="#786cff" opacity=".08"/>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="1035" cy="40" r="270" fill="#4cdbac" opacity=".055"/><circle cx="770" cy="690" r="350" fill="#7869ff" opacity=".065"/>
+  <path d="M0 150h1200M0 300h1200M0 450h1200M0 600h1200M150 0v675M300 0v675M450 0v675M600 0v675M750 0v675M900 0v675M1050 0v675" stroke="#ffffff" stroke-width="1" opacity=".018"/>
   <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
-    <text x="64" y="75" fill="#ffffff" font-size="40" font-weight="800">一条 Android 通知，会去哪里？</text>
-    <text x="64" y="116" fill="#91a8be" font-size="20">流程动画 · 不是真机录屏 · 不含真实账号或通知</text>
+    <g transform="translate(58 42)"><rect width="112" height="34" rx="17" fill="#45dda5"/><text x="56" y="23" fill="#052119" font-size="17" text-anchor="middle" font-weight="850">XXZF</text></g>
+    <text x="58" y="132" fill="#ffffff" font-size="46" font-weight="850">Android 来消息，常用设备一起知道</text>
+    <text x="58" y="173" fill="#91a4ba" font-size="21">正文默认隐藏 · 服务由自己部署 · iPhone 通过 Bark 接收</text>
+    <g transform="translate(940 46)"><rect width="202" height="34" rx="17" fill="#ffffff" opacity=".055" stroke="#ffffff" stroke-opacity=".1"/><circle cx="20" cy="17" r="5" fill="#4ae0a8"/><text x="111" y="23" fill="#aebed0" font-size="15" text-anchor="middle" font-weight="700" letter-spacing="1">OPEN SOURCE</text></g>
 
-    <g transform="translate(82 222)">
-      <rect width="176" height="344" rx="42" fill="#0d1726" stroke="#57e6ad" stroke-width="5"/>
-      <rect x="17" y="52" width="142" height="221" rx="18" fill="#183247"/>
-      <rect x="37" y="82" width="102" height="82" rx="16" fill="#244a5d"/>
-      <circle cx="58" cy="106" r="10" fill="#50e3aa"/><path d="M78 102h43M48 136h74" stroke="#ddfff3" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="88" cy="310" r="10" fill="#57e6ad"/>
-      <text x="88" y="390" fill="#e1fff5" font-size="24" text-anchor="middle" font-weight="750">Android</text>
-      <text x="88" y="423" fill="#8eb7aa" font-size="18" text-anchor="middle">选中的 App 通知</text>
+    <path d="M278 385C348 385 356 364 424 364" fill="none" stroke="#52dfaa" stroke-width="3" stroke-linecap="round" opacity=".24"/>
+    <path d="M570 345C630 345 646 294 690 294" fill="none" stroke="#6eb8ff" stroke-width="3" stroke-linecap="round" opacity=".24"/>
+    <path d="M570 382C680 382 814 445 977 445" fill="none" stroke="#b394ff" stroke-width="3" stroke-linecap="round" opacity=".22"/>
+
+    <g transform="translate(78 210)">
+      <rect width="200" height="330" rx="46" fill="#090f1a" stroke="#55e1ac" stroke-width="4"/>
+      <rect x="15" y="49" width="170" height="220" rx="26" fill="url(#screen)"/>
+      <rect x="74" y="18" width="52" height="7" rx="4" fill="#273747"/>
+      <circle cx="100" cy="303" r="9" fill="#55e1ac"/>
+      <g transform="translate(31 82)">
+        <rect width="138" height="78" rx="19" fill="#192c3c" stroke="#2d5360" stroke-width="2"/>
+        <rect x="12" y="13" width="42" height="42" rx="12" fill="#3bdd99"/><path d="M24 28h18M24 38h22M24 48h14" stroke="#06251c" stroke-width="4" stroke-linecap="round"/>
+        <text x="66" y="34" fill="#f1f7fc" font-size="15" font-weight="800">微信</text><text x="66" y="55" fill="#7f93a7" font-size="12">新消息</text>
+      </g>
+      <text x="100" y="370" fill="#e5fff5" font-size="22" text-anchor="middle" font-weight="800">Android</text>
+      <text x="100" y="397" fill="#77988c" font-size="16" text-anchor="middle">只监听你选的 App</text>
     </g>
 
-    <path d="M300 386h132" stroke="#49dda4" stroke-width="7" stroke-linecap="round" stroke-dasharray="14 16" opacity=".65"/><path d="M413 369l23 17-23 17" fill="none" stroke="#49dda4" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-    <g transform="translate(458 296)">
-      <rect width="238" height="178" rx="34" fill="#142d43" stroke="#5adca9" stroke-width="4"/>
-      <path d="M55 65h128M55 91h95M55 117h112" stroke="#7bf0c0" stroke-width="8" stroke-linecap="round"/>
-      <circle cx="201" cy="42" r="11" fill="#4fe0a7"/>
-      <text x="119" y="222" fill="#e0fff3" font-size="24" text-anchor="middle" font-weight="750">你的 XXZF 服务</text>
-      <text x="119" y="255" fill="#8eb7aa" font-size="18" text-anchor="middle">配对 · 路由 · 限速</text>
-    </g>
-    <path d="M722 386h102" stroke="#70bdff" stroke-width="7" stroke-linecap="round" stroke-dasharray="14 16" opacity=".72"/><path d="M805 369l23 17-23 17" fill="none" stroke="#70bdff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-
-    <g transform="translate(862 158)">
-      <rect width="270" height="174" rx="28" fill="#172f49" stroke="#7bbcff" stroke-width="5"/>
-      <rect x="24" y="24" width="222" height="105" rx="12" fill="#294b65"/>
-      <path d="M92 210h88M136 174v36" stroke="#7bbcff" stroke-width="8" stroke-linecap="round"/>
-      <text x="135" y="257" fill="#e1efff" font-size="24" text-anchor="middle" font-weight="750">Mac / Windows</text>
-      <text x="135" y="290" fill="#98b6d6" font-size="18" text-anchor="middle">原生桌面提醒</text>
-    </g>
-    <g transform="translate(919 372)">
-      <rect width="156" height="238" rx="38" fill="#111a2b" stroke="#c4a5ff" stroke-width="5"/>
-      <rect x="17" y="48" width="122" height="137" rx="16" fill="#2b3156"/>
-      <circle cx="78" cy="210" r="9" fill="#c4a5ff"/>
-      <text x="78" y="282" fill="#eee8ff" font-size="24" text-anchor="middle" font-weight="750">iPhone</text>
-      <text x="78" y="315" fill="#b4a3d7" font-size="18" text-anchor="middle">通过 Bark</text>
+    <g transform="translate(424 296)">
+      <rect width="146" height="138" rx="36" fill="url(#glass)" stroke="#4ee0a7" stroke-opacity=".65" stroke-width="3"/>
+      <circle cx="73" cy="55" r="26" fill="#41da9f" opacity=".15"/><path d="M52 55h42M62 43l-12 12 12 12M84 43l12 12-12 12" fill="none" stroke="#56e6af" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="73" y="105" fill="#e4fff5" font-size="20" text-anchor="middle" font-weight="850">XXZF</text>
+      <text x="73" y="165" fill="#89a89d" font-size="15" text-anchor="middle">你的服务</text>
     </g>
 
-    <g transform="translate(64 660)"><rect width="600" height="48" rx="18" fill="#ffffff" opacity=".07"/><circle cx="26" cy="24" r="8" fill="#49e1a7"/><text x="48" y="31" fill="#c8d7e6" font-size="19">默认只显示来源 App 和标题，原始正文不作为 Bark 正文发送</text></g>
+    <g transform="translate(690 218)">
+      <rect width="390" height="224" rx="30" fill="#0c1420" stroke="#6fbaff" stroke-width="4"/>
+      <rect x="17" y="17" width="356" height="188" rx="18" fill="url(#screen)"/>
+      <path d="M152 260h86M195 224v36" stroke="#6fbaff" stroke-width="7" stroke-linecap="round"/>
+      <text x="170" y="302" fill="#e5f1ff" font-size="22" text-anchor="middle" font-weight="800">Mac / Windows</text>
+      <text x="170" y="330" fill="#7e99b7" font-size="16" text-anchor="middle">桌面原生提醒</text>
+    </g>
+
+    <g transform="translate(977 345)">
+      <rect width="142" height="232" rx="38" fill="#0a101c" stroke="#b899ff" stroke-width="4"/>
+      <rect x="13" y="42" width="116" height="146" rx="19" fill="#20233c"/>
+      <rect x="50" y="18" width="42" height="6" rx="3" fill="#30334d"/>
+      <circle cx="71" cy="209" r="8" fill="#b899ff"/>
+      <text x="71" y="260" fill="#f0eaff" font-size="22" text-anchor="middle" font-weight="800">iPhone</text>
+      <text x="71" y="286" fill="#9d8dc2" font-size="16" text-anchor="middle">Bark</text>
+    </g>
+
+    <text x="58" y="658" fill="#63778c" font-size="15">流程动画 · 不是真机录像 · 不含真实账号、设备、域名或通知</text>
   </g>
 </svg>

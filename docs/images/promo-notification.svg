@@ -1,10 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="330" height="112" viewBox="0 0 330 112" role="img" aria-labelledby="title desc">
-  <title id="title">XXZF 演示通知卡片</title><desc id="desc">微信新消息，内容已隐藏</desc>
-  <rect x="3" y="3" width="324" height="106" rx="25" fill="#f3f7fb" stroke="#ffffff" stroke-width="4" opacity=".98"/>
-  <rect x="24" y="24" width="62" height="62" rx="17" fill="#34d68e"/>
-  <path d="M40 44h30M40 57h34M40 70h22" stroke="#06261d" stroke-width="6" stroke-linecap="round"/>
-  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
-    <text x="105" y="49" fill="#132235" font-size="23" font-weight="800">微信 · 新消息</text>
-    <text x="105" y="79" fill="#6d7e90" font-size="18">内容已隐藏</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="92" viewBox="0 0 300 92" role="img" aria-labelledby="title desc">
+  <title id="title">桌面通知卡片</title><desc id="desc">微信新消息，正文已隐藏</desc>
+  <defs><linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2b3b"/><stop offset="1" stop-color="#121b2b"/></linearGradient></defs>
+  <rect x="2" y="2" width="296" height="88" rx="22" fill="url(#card)" stroke="#426076" stroke-width="2"/>
+  <rect x="16" y="16" width="58" height="58" rx="17" fill="#3cdb98"/><path d="M31 34h28M31 45h32M31 56h21" stroke="#06251c" stroke-width="5" stroke-linecap="round"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"><text x="92" y="39" fill="#f3f8fc" font-size="20" font-weight="800">微信 · 新消息</text><text x="92" y="66" fill="#8095a9" font-size="15">正文已隐藏</text></g>
 </svg>
