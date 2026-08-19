@@ -8,6 +8,10 @@
 
 The project ships the complete Android sender, Python service, macOS and Windows receivers, Bark enrollment page, deployment templates, tests, and build tooling. You choose the HTTPS endpoints and build the clients for your own deployment; non-working documentation domains are used until that configuration is supplied.
 
+![Animated XXZF notification flow from Android to desktop and iPhone](docs/images/xxzf-demo.gif)
+
+_Concept animation, not a device recording. It contains no real account, device, endpoint, or notification data._
+
 ![How XXZF works](docs/images/how-it-works.svg)
 
 ## Components

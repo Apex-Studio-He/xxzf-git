@@ -16,7 +16,7 @@ SKIP_NAMES = {
     "task_plan.md", "findings.md", "progress.md", "request.local.json",
 }
 BINARY_SUFFIXES = {
-    ".apk", ".dmg", ".exe", ".ico", ".jar", ".jpg", ".jpeg", ".png",
+    ".apk", ".dmg", ".exe", ".gif", ".ico", ".jar", ".jpg", ".jpeg", ".png",
     ".p12", ".pfx", ".zip",
 }
 APPROVED_BINARY_SHA256 = {
@@ -24,6 +24,7 @@ APPROVED_BINARY_SHA256 = {
     "docs/images/promo-cover.png": "8790a75ed230b98bf0ef8b19aeeee5255cd2fe38f11e0c21c7dfc27c641d14a9",
     "docs/images/promo-privacy.png": "d753a5fb30c3c4199a95e7e97ef92380808c96defe319f630fc4bf480afa9e10",
     "docs/images/social-preview.png": "c22be266b4d7317dcea5052208a0e481cc016ca6c3640d132ef076615f08b81f",
+    "docs/images/xxzf-demo.gif": "3fd71e5c486a182049d0c62d2f3b32e114962d45c91dafc51e5a2620f0cdbb73",
     "server/mac_notifier/AppIcon-source.png": "6fe070103faaab1cd211a7802ed7ea57d4b6db38af19ca5b5701116f197fdf02",
     "server/mac_notifier/AppIcon-v3.png": "ae4cafacc1c1be0c4980468f503dd283e0f6e0c4a5b91f901ec5b5c3aabc7d1f",
     "windows/Forwarder.ico": "15f61d71bfb0347030232fd53bbaf67217828daa9a97320e958ce9642b5b0ffb",

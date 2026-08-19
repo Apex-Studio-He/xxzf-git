@@ -29,6 +29,12 @@ XXZF 可以把 Android 上的通知送到这些设备。比如快递、外卖、
 
 > **30 秒判断适不适合你：** 有自己的服务器、NAS 或长期在线的 Mac，并愿意配置域名和 HTTPS，就可以继续；如果只想下载一个 App 直接使用，这个源码项目目前并不适合。
 
+<p align="center">
+  <img src="docs/images/xxzf-demo.gif" alt="XXZF 将 Android 通知转发到电脑与 iPhone 的流程动画" width="100%">
+</p>
+
+<p align="center"><sub>流程动画，不是真机录像；画面不含真实账号、设备或通知。</sub></p>
+
 ### 你会得到什么
 
 - **Android 发送端**：选择要转发的 App，后台监听通知，管理已连接设备。
