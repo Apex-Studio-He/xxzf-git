@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">转发</string>
+    <string name="service_name">转发通知监听</string>
+</resources>

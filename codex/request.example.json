@@ -1,0 +1,11 @@
+{
+  "public_base": "https://notify.example.com/xxzf",
+  "update_base": "https://updates.example.com/downloads/forwarder/test",
+  "targets": [
+    "server",
+    "android",
+    "macos"
+  ],
+  "build_mode": "debug",
+  "server_platform": "linux"
+}

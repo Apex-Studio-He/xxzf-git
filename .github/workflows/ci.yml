@@ -1,0 +1,68 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python-and-privacy:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v6
+      - name: Select JDK 17
+        run: echo "JAVA_HOME=$(/usr/libexec/java_home -v 17)" >> "$GITHUB_ENV"
+      - name: Install secret scanner
+        run: brew install gitleaks
+      - name: Privacy scan
+        run: ./scripts/privacy_scan.sh
+      - name: Codex workflow tests
+        run: |
+          python3 scripts/test_codex_workflow.py
+          python3 -m py_compile \
+            scripts/codex_request.py \
+            scripts/validate_codex_request.py \
+            scripts/codex_preflight.py \
+            scripts/codex_build.py
+      - name: Python server tests
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 -m unittest discover -s server -p 'test_*.py'
+      - name: Android policy tests
+        run: |
+          ./android/test_receiver.sh
+          ./android/test_security.sh
+          ./android/build.sh
+      - name: macOS build and updater tests
+        run: |
+          ./server/mac_notifier/build.sh
+          ./server/mac_receiver/test_update_manager.sh
+          ./server/mac_receiver/build.sh
+          ./server/mac_receiver/test_update_install.sh
+      - name: Documentation images
+        run: |
+          for image in docs/images/*.svg; do
+            xmllint --noout "$image"
+          done
+      - name: Shell syntax
+        run: |
+          while IFS= read -r script; do
+            case "$(head -n 1 "$script")" in
+              *zsh*) zsh -n "$script" ;;
+              *) bash -n "$script" ;;
+            esac
+          done < <(find . -type f -name '*.sh' -not -path './.git/*' -print)
+      - name: JavaScript syntax
+        run: node --check public/bark/bind.js
+
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build Windows receiver and installer
+        shell: powershell
+        run: |
+          .\windows\build.ps1
+          .\windows\build-installer.ps1

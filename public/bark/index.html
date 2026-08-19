@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>连接 iPhone · 转发</title>
+  <meta name="description" content="使用一次性绑定码把 Bark 安全连接到转发。">
+  <link rel="stylesheet" href="/xxzf/bark/bind.css?v=20260804">
+</head>
+<body>
+  <main class="page">
+    <section class="panel" aria-labelledby="page-title">
+      <header class="product">
+        <div class="app-mark" aria-hidden="true">→</div>
+        <div>
+          <p class="eyebrow">转发 · IPHONE / BARK</p>
+          <h1 id="page-title">连接这台 iPhone</h1>
+          <p class="lead">绑定后，Android 通知会通过 Bark 到达这里。只显示来源应用和通知标题，不发送正文。</p>
+        </div>
+      </header>
+
+      <ol class="steps" aria-label="准备步骤">
+        <li>在 iPhone 安装并打开 <a href="https://apps.apple.com/cn/app/id1403753865" rel="noreferrer noopener">Bark</a></li>
+        <li>在 Bark 首页复制完整测试地址</li>
+        <li>粘贴到下方并完成绑定</li>
+      </ol>
+
+      <div class="token-state" id="tokenState" role="status" aria-live="polite">
+        <span class="state-dot" aria-hidden="true"></span>
+        <strong id="tokenStateText">正在读取一次性绑定码</strong>
+      </div>
+
+      <form id="bindForm" autocomplete="off" novalidate>
+        <div class="field" id="manualCodeField" hidden>
+          <label for="manualCode">6 位备用码</label>
+          <input id="manualCode" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+          <small>备用码显示在 Android 的“添加 iPhone”窗口，有效期 5 分钟。</small>
+        </div>
+
+        <div class="field">
+          <label for="deviceName">设备名称</label>
+          <input id="deviceName" type="text" maxlength="40" value="我的 iPhone" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="barkUrl">Bark 完整测试地址</label>
+          <input id="barkUrl" type="url" inputmode="url" maxlength="2048" placeholder="https://api.day.app/..." spellcheck="false" autocapitalize="none" autocomplete="off" required>
+          <small>请直接粘贴 Bark 首页复制的地址，不要拆分或修改。</small>
+        </div>
+
+        <button id="bindSubmit" type="submit">绑定并发送测试</button>
+        <p class="result" id="bindResult" role="status" aria-live="polite"></p>
+      </form>
+
+      <aside class="privacy">
+        <strong>隐私说明</strong>
+        <p>一次性码使用后立即失效。页面打开后会从地址栏清除绑定凭证，不使用浏览器存储，也不会在设备列表或日志中显示 Bark 密钥。</p>
+      </aside>
+
+      <noscript>需要启用 JavaScript 才能完成 Bark 绑定。</noscript>
+    </section>
+  </main>
+  <script src="/xxzf/bark/bind.js?v=20260804"></script>
+</body>
+</html>

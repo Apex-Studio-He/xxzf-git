@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="460" viewBox="0 0 1200 460" role="img" aria-labelledby="title desc">
+  <title id="title">用 Codex 辅助构建 XXZF</title>
+  <desc id="desc">下载源码、填公开配置、Codex 检查环境并构建客户端</desc>
+  <rect width="1200" height="460" rx="32" fill="#101827"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="64" y="72" fill="#ffffff" font-size="35" font-weight="800">小白模式：把配置交给 Codex</text>
+    <text x="64" y="110" fill="#aebbd0" font-size="20">你只需准备域名和目标平台；Codex 会先体检，再配置、测试和构建。</text>
+    <g transform="translate(54 157)">
+      <g>
+        <rect width="235" height="202" rx="24" fill="#19263a" stroke="#2c405c" stroke-width="2"/>
+        <circle cx="38" cy="38" r="21" fill="#43d8a0"/>
+        <text x="38" y="46" fill="#09251c" font-size="21" text-anchor="middle" font-weight="800">1</text>
+        <text x="28" y="100" fill="#ffffff" font-size="24" font-weight="750">下载源码</text>
+        <text x="28" y="137" fill="#aebbd0" font-size="17">Git clone 或 ZIP</text>
+        <text x="28" y="166" fill="#aebbd0" font-size="17">用 Codex 打开文件夹</text>
+      </g>
+      <path d="M246 101h28" stroke="#6e8bb6" stroke-width="4" stroke-linecap="round"/>
+      <g transform="translate(286)">
+        <rect width="235" height="202" rx="24" fill="#19263a" stroke="#2c405c" stroke-width="2"/>
+        <circle cx="38" cy="38" r="21" fill="#43d8a0"/>
+        <text x="38" y="46" fill="#09251c" font-size="21" text-anchor="middle" font-weight="800">2</text>
+        <text x="28" y="100" fill="#ffffff" font-size="24" font-weight="750">填 4 项信息</text>
+        <text x="28" y="137" fill="#aebbd0" font-size="17">服务地址 · 更新地址</text>
+        <text x="28" y="166" fill="#aebbd0" font-size="17">目标平台 · 构建模式</text>
+      </g>
+      <path d="M532 101h28" stroke="#6e8bb6" stroke-width="4" stroke-linecap="round"/>
+      <g transform="translate(572)">
+        <rect width="235" height="202" rx="24" fill="#19263a" stroke="#2c405c" stroke-width="2"/>
+        <circle cx="38" cy="38" r="21" fill="#43d8a0"/>
+        <text x="38" y="46" fill="#09251c" font-size="21" text-anchor="middle" font-weight="800">3</text>
+        <text x="28" y="100" fill="#ffffff" font-size="24" font-weight="750">Codex 自动体检</text>
+        <text x="28" y="137" fill="#aebbd0" font-size="17">检查 JDK / SDK / Python</text>
+        <text x="28" y="166" fill="#aebbd0" font-size="17">缺什么会说清楚</text>
+      </g>
+      <path d="M818 101h28" stroke="#6e8bb6" stroke-width="4" stroke-linecap="round"/>
+      <g transform="translate(858)">
+        <rect width="235" height="202" rx="24" fill="#1a3a36" stroke="#3b7c69" stroke-width="2"/>
+        <circle cx="38" cy="38" r="21" fill="#43d8a0"/>
+        <text x="38" y="46" fill="#09251c" font-size="21" text-anchor="middle" font-weight="800">4</text>
+        <text x="28" y="100" fill="#ffffff" font-size="24" font-weight="750">收取构建产物</text>
+        <text x="28" y="137" fill="#bdebdc" font-size="17">测试通过后才交付</text>
+        <text x="28" y="166" fill="#bdebdc" font-size="17">位置和校验值都列出</text>
+      </g>
+    </g>
+    <text x="600" y="412" fill="#8ea0ba" font-size="17" text-anchor="middle">密码、证书私钥、Bark Key 不填在模板里，也不提交到 Git。</text>
+  </g>
+</svg>

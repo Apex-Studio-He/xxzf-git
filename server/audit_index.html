@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>讯桥通知记录</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --ink: #18202a;
+      --muted: #687485;
+      --line: #d9dfe7;
+      --accent: #0969da;
+      --good: #18794e;
+      --warn: #9a6700;
+      --bad: #c0392b;
+      --tag: #eef4fb;
+      --shadow: 0 10px 30px rgba(24, 32, 42, .12);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101419;
+        --surface: #191f27;
+        --ink: #edf2f7;
+        --muted: #9aa7b6;
+        --line: #35404d;
+        --accent: #69a7ff;
+        --good: #5bc28c;
+        --warn: #e3b341;
+        --bad: #ff7b72;
+        --tag: #222d39;
+        --shadow: 0 12px 34px rgba(0, 0, 0, .36);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.5 -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+    .bar, main {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+    .bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand { min-width: 0; }
+    h1 { margin: 0; font-size: 21px; line-height: 1.25; }
+    .meta { color: var(--muted); margin-top: 2px; font-size: 12px; }
+    .tools {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    input, button {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      font: inherit;
+    }
+    input { width: min(330px, 42vw); padding: 0 11px; }
+    button { padding: 0 14px; cursor: pointer; color: var(--accent); font-weight: 600; }
+    button:hover { border-color: var(--accent); }
+    button.danger { color: #c0392b; }
+    main { padding-top: 20px; }
+    .health-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .health-card {
+      min-height: 106px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .health-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .health-dot {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+    .health-card strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+    .health-detail {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .health-card[data-state="good"] .health-dot { background: var(--good); }
+    .health-card[data-state="good"] strong { color: var(--good); }
+    .health-card[data-state="waiting"] .health-dot { background: var(--warn); }
+    .health-card[data-state="waiting"] strong { color: var(--warn); }
+    .health-card[data-state="bad"] .health-dot { background: var(--bad); }
+    .health-card[data-state="bad"] strong { color: var(--bad); }
+    .summary {
+      display: flex;
+      gap: 24px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+    .summary strong { color: var(--ink); font-size: 18px; }
+    .device-browser { margin-bottom: 14px; }
+    .device-browser-label { color: var(--muted); font-size: 12px; margin-bottom: 7px; }
+    .device-filter {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+    .device-filter button {
+      flex: 0 0 auto;
+      height: 42px;
+      max-width: 260px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+    }
+    .device-filter button.current {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+      color: var(--accent);
+    }
+    .device-filter .device-count { color: var(--muted); font-weight: 500; }
+    .table-wrap {
+      overflow: auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    table { width: 100%; min-width: 1060px; border-collapse: collapse; }
+    th, td { padding: 11px 13px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+    tbody tr:last-child td { border-bottom: 0; }
+    .time { white-space: nowrap; color: var(--muted); }
+    .device { font-weight: 600; }
+    .fingerprint {
+      display: inline-block;
+      margin-top: 3px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--tag);
+      color: var(--muted);
+      font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .app { color: var(--good); font-weight: 600; }
+    .body {
+      max-width: 430px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .empty { padding: 54px 20px; text-align: center; color: var(--muted); }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 66px;
+      padding: 14px 0;
+    }
+    .pagination[hidden] { display: none; }
+    .pagination button { min-width: 38px; padding: 0 10px; }
+    .pagination button.current {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+    .pagination button:disabled { cursor: default; opacity: .45; }
+    .page-gap { width: 24px; text-align: center; color: var(--muted); }
+    .devices { margin-top: 24px; }
+    .diagnostics { margin-top: 24px; }
+    .diagnostic-filter { margin-bottom: 10px; }
+    .status-pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--tag);
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .status-pill.good { color: var(--good); }
+    .status-pill.bad { color: #c0392b; }
+    .section-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+    .section-head h2 { margin: 0; font-size: 17px; }
+    .device-actions { display: flex; gap: 6px; align-items: center; white-space: nowrap; }
+    .device-actions input { width: 74px; height: 34px; }
+    .device-actions button { height: 34px; padding: 0 10px; }
+    .role { color: var(--muted); }
+    dialog {
+      width: min(720px, calc(100vw - 32px));
+      max-height: calc(100vh - 48px);
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: var(--shadow);
+    }
+    dialog::backdrop { background: rgba(8, 13, 20, .55); }
+    .dialog-head { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { margin: 0; font-size: 17px; }
+    .dialog-head button { margin-left: auto; }
+    .dialog-body { padding: 18px; overflow: auto; }
+    dl { display: grid; grid-template-columns: 100px 1fr; gap: 10px 14px; margin: 0; }
+    dt { color: var(--muted); }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    .full-body { white-space: pre-wrap; }
+    @media (max-width: 720px) {
+      .bar { align-items: flex-start; flex-wrap: wrap; padding: 14px; }
+      .tools { width: 100%; margin-left: 0; }
+      input { flex: 1; width: auto; min-width: 0; }
+      main { padding: 14px; }
+      .summary { gap: 12px; flex-wrap: wrap; }
+      .health-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .health-card { min-height: 98px; padding: 12px; }
+      .health-card strong { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <h1>讯桥通知记录</h1>
+        <div class="meta" id="status">正在读取服务器</div>
+      </div>
+      <div class="tools">
+        <input id="search" type="search" placeholder="搜索设备、App 或正文" autocomplete="off">
+        <button id="refresh" type="button">刷新</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="health-grid" aria-label="传输服务状态">
+      <article class="health-card" id="health-server" data-state="waiting">
+        <div class="health-label"><span class="health-dot"></span>服务器</div>
+        <strong id="health-server-value">正在连接</strong>
+        <span class="health-detail" id="health-server-detail">等待首次检查</span>
+      </article>
+      <article class="health-card" id="health-link" data-state="waiting">
+        <div class="health-label"><span class="health-dot"></span>传输链路</div>
+        <strong id="health-link-value">正在检查</strong>
+        <span class="health-detail" id="health-link-detail">读取接收端连接</span>
+      </article>
+      <article class="health-card" id="health-latest" data-state="waiting">
+        <div class="health-label"><span class="health-dot"></span>最近传输</div>
+        <strong id="health-latest-value">暂无记录</strong>
+        <span class="health-detail" id="health-latest-detail">等待第一条通知</span>
+      </article>
+      <article class="health-card" id="health-refresh" data-state="good">
+        <div class="health-label"><span class="health-dot"></span>自动更新</div>
+        <strong>每 5 秒</strong>
+        <span class="health-detail" id="health-refresh-detail">页面会自动保持最新</span>
+      </article>
+    </section>
+    <section class="device-browser">
+      <div class="device-browser-label">按发送设备查看</div>
+      <div class="device-filter" id="device-filter"></div>
+    </section>
+    <div class="summary">
+      <span><strong id="count">0</strong> 条记录</span>
+      <span id="usage">0 B / 10 GiB</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>时间</th><th>发送设备</th><th>接收设备 / 密钥</th><th>来源</th><th>标题与正文</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty">暂无通知记录</div>
+    </div>
+    <nav class="pagination" id="pagination" aria-label="通知记录分页"></nav>
+    <section class="devices">
+      <div class="section-head"><h2>配对设备</h2><span class="meta" id="device-count"></span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>设备</th><th>类型</th><th>密钥</th><th>最近在线</th><th>状态</th><th>每分钟上限</th></tr></thead>
+          <tbody id="devices"></tbody>
+        </table>
+        <div class="empty" id="devices-empty">暂无配对设备</div>
+      </div>
+    </section>
+    <section class="diagnostics">
+      <div class="section-head"><h2>设备诊断</h2><span class="meta" id="diagnostic-count"></span></div>
+      <div class="device-filter diagnostic-filter" id="diagnostic-filter"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>上传时间</th><th>设备</th><th>连接</th><th>系统权限</th><th>支持编号</th><th>最近状态</th></tr></thead>
+          <tbody id="diagnostics"></tbody>
+        </table>
+        <div class="empty" id="diagnostics-empty">暂无设备诊断</div>
+      </div>
+    </section>
+  </main>
+  <dialog id="detail">
+    <div class="dialog-head"><h2>通知详情</h2><button id="close" type="button">关闭</button></div>
+    <div class="dialog-body"><dl id="detail-list"></dl></div>
+  </dialog>
+  <dialog id="diagnostic-detail">
+    <div class="dialog-head"><h2>设备诊断详情</h2><button id="diagnostic-close" type="button">关闭</button></div>
+    <div class="dialog-body"><dl id="diagnostic-detail-list"></dl></div>
+  </dialog>
+  <script>
+    const state = {
+      events: [], devices: [], deviceGroups: [], senderId: '', page: 1,
+      pageSize: 20, total: 0, requestId: 0, diagnostics: [],
+      diagnosticGroups: [], diagnosticDeviceId: '', health: null
+    };
+    const $ = id => document.getElementById(id);
+    const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const formatBytes = value => {
+      const units = ['B', 'KiB', 'MiB', 'GiB'];
+      let n = Number(value || 0), i = 0;
+      while (n >= 1024 && i < units.length - 1) { n /= 1024; i += 1; }
+      return `${n.toFixed(i ? 1 : 0)} ${units[i]}`;
+    };
+    const formatTime = value => value ? new Date(Number(value)).toLocaleString('zh-CN', { hour12: false }) : '';
+    function setHealthCard(name, stateName, value, detail) {
+      const card = $(`health-${name}`);
+      card.dataset.state = stateName;
+      $(`health-${name}-value`).textContent = value;
+      $(`health-${name}-detail`).textContent = detail;
+    }
+    function renderHealth(health) {
+      const serverTime = Number(health.serverTime || Date.now());
+      setHealthCard(
+        'server', 'good', '正常运行',
+        `检查于 ${new Date(serverTime).toLocaleTimeString('zh-CN', { hour12: false })}`
+      );
+      const receiverCount = Number(health.activeReceiverCount || 0);
+      const streamCount = Number(health.activeStreamCount || 0);
+      if (streamCount > 0) {
+        const names = (health.activeReceivers || []).map(item => item.name).filter(Boolean).join('、');
+        setHealthCard(
+          'link', 'good', '链路正常',
+          `${receiverCount} 台接收设备在线${names ? ` · ${names}` : ''}`
+        );
+      } else {
+        setHealthCard(
+          'link', 'waiting', '接收端未连接',
+          `${Number(health.configuredReceiverCount || 0)} 台已配置设备，当前无在线长连接`
+        );
+      }
+      const latest = Number(health.latestEventAt || 0);
+      if (latest > 0) {
+        setHealthCard(
+          'latest', 'good', new Date(latest).toLocaleTimeString('zh-CN', { hour12: false }),
+          new Date(latest).toLocaleDateString('zh-CN')
+        );
+      } else {
+        setHealthCard('latest', 'waiting', '暂无记录', '等待第一条通知');
+      }
+      $('health-refresh-detail').textContent = `上次更新 ${new Date(serverTime).toLocaleTimeString('zh-CN', { hour12: false })}`;
+    }
+    function renderHealthUnavailable() {
+      setHealthCard('server', 'bad', '无法访问', '请检查服务进程或本机网络');
+      setHealthCard('link', 'bad', '状态未知', '服务器恢复后自动重新检查');
+      $('health-refresh-detail').textContent = '5 秒后自动重试';
+    }
+    const destinationHtml = items => (items || []).map(item => `
+      <div class="device">${escapeHtml(item.name || '接收端')}</div>
+      <span class="fingerprint">${escapeHtml(item.fingerprint || 'LEGACY')}</span>
+    `).join('') || '<span class="fingerprint">本机旧链路</span>';
+    function render() {
+      $('empty').hidden = state.events.length > 0;
+      $('rows').innerHTML = state.events.map((event, index) => `
+        <tr data-index="${index}">
+          <td class="time">${escapeHtml(formatTime(event.received_at))}</td>
+          <td><div class="device">${escapeHtml(event.sender_name)}</div><span class="fingerprint">${escapeHtml(event.sender_fingerprint || 'LEGACY')}</span></td>
+          <td>${destinationHtml(event.destinations)}</td>
+          <td><div class="app">${escapeHtml(event.app_name)}</div><div class="meta">${escapeHtml(event.package_name || '')}</div></td>
+          <td><strong>${escapeHtml(event.title || '无标题')}</strong><div class="body">${escapeHtml(event.body || '无正文')}</div></td>
+        </tr>
+      `).join('');
+      document.querySelectorAll('#rows tr').forEach(row => row.onclick = () => showDetail(state.events[Number(row.dataset.index)]));
+      renderPagination();
+    }
+    function renderDeviceFilter() {
+      const total = state.deviceGroups.reduce((sum, item) => sum + Number(item.count || 0), 0);
+      const buttons = [{ sender_id: '', sender_name: '全部设备', count: total }].concat(state.deviceGroups);
+      $('device-filter').innerHTML = buttons.map(device => {
+        const id = String(device.sender_id || '');
+        const name = device.sender_name || '未知设备';
+        const fingerprint = device.sender_fingerprint
+          ? ` · ${String(device.sender_fingerprint).slice(-4)}` : '';
+        return `<button type="button" data-sender="${escapeHtml(id)}" class="${id === state.senderId ? 'current' : ''}">
+          <span>${escapeHtml(name + fingerprint)}</span><span class="device-count">${Number(device.count || 0)}</span>
+        </button>`;
+      }).join('');
+      document.querySelectorAll('#device-filter [data-sender]').forEach(button => {
+        button.onclick = () => {
+          state.senderId = button.dataset.sender || '';
+          state.page = 1;
+          load();
+        };
+      });
+    }
+    function visiblePages(totalPages, currentPage) {
+      if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index + 1);
+      const values = new Set([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
+      if (currentPage <= 4) [2, 3, 4, 5].forEach(page => values.add(page));
+      if (currentPage >= totalPages - 3) {
+        [totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1].forEach(page => values.add(page));
+      }
+      return [...values].filter(page => page >= 1 && page <= totalPages).sort((a, b) => a - b);
+    }
+    function renderPagination() {
+      const totalPages = Math.max(1, Math.ceil(state.total / state.pageSize));
+      const pagination = $('pagination');
+      pagination.hidden = state.total <= state.pageSize;
+      if (pagination.hidden) {
+        pagination.innerHTML = '';
+        return;
+      }
+      const pages = visiblePages(totalPages, state.page);
+      let previous = 0;
+      const pageButtons = pages.map(page => {
+        const gap = previous && page - previous > 1 ? '<span class="page-gap">…</span>' : '';
+        previous = page;
+        return `${gap}<button type="button" data-page="${page}" class="${page === state.page ? 'current' : ''}" ${page === state.page ? 'aria-current="page"' : ''}>${page}</button>`;
+      }).join('');
+      pagination.innerHTML = `
+        <button type="button" data-page="${state.page - 1}" ${state.page === 1 ? 'disabled' : ''}>上一页</button>
+        ${pageButtons}
+        <button type="button" data-page="${state.page + 1}" ${state.page === totalPages ? 'disabled' : ''}>下一页</button>
+      `;
+      pagination.querySelectorAll('[data-page]:not([disabled])').forEach(button => {
+        button.onclick = () => goToPage(Number(button.dataset.page));
+      });
+    }
+    function goToPage(page) {
+      const totalPages = Math.max(1, Math.ceil(state.total / state.pageSize));
+      state.page = Math.max(1, Math.min(totalPages, page));
+      load();
+      document.querySelector('.summary').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function renderDevices() {
+      $('devices-empty').hidden = state.devices.length > 0;
+      $('device-count').textContent = `${state.devices.length} 台`;
+      $('devices').innerHTML = state.devices.map(device => `
+        <tr>
+          <td><div class="device">${escapeHtml(device.name)}</div><div class="meta">${escapeHtml(device.platform)}</div></td>
+          <td class="role">${device.role === 'sender' ? '发送端' : '接收端'}</td>
+          <td><span class="fingerprint">${escapeHtml(device.fingerprint)}</span></td>
+          <td class="time">${escapeHtml(formatTime(device.lastSeenAt))}</td>
+          <td>${device.status === 'active' ? '<span class="app">正常</span>' : '已撤销'}</td>
+          <td>
+            <div class="device-actions">
+              <input type="number" min="10" max="600" value="${Number(device.rateLimit || 120)}" data-rate-for="${escapeHtml(device.deviceId)}" ${device.status !== 'active' ? 'disabled' : ''}>
+              <button type="button" data-save-rate="${escapeHtml(device.deviceId)}" ${device.status !== 'active' ? 'disabled' : ''}>保存</button>
+              <button type="button" class="danger" data-revoke="${escapeHtml(device.deviceId)}" ${device.status !== 'active' ? 'disabled' : ''}>撤销</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      document.querySelectorAll('[data-save-rate]').forEach(button => button.onclick = () => saveRate(button.dataset.saveRate));
+      document.querySelectorAll('[data-revoke]').forEach(button => button.onclick = () => revokeDevice(button.dataset.revoke));
+    }
+    const diagnosticStatus = value => ({
+      online: '在线', offline: '无网络', unreachable: '服务器不可用',
+      auth_failed: '需要重新连接', unknown: '未知'
+    }[value] || '未知');
+    function appendTextCell(row, value, className = '') {
+      const cell = document.createElement('td');
+      cell.textContent = String(value ?? '');
+      if (className) cell.className = className;
+      row.appendChild(cell);
+      return cell;
+    }
+    function renderDiagnosticFilter() {
+      const filter = $('diagnostic-filter');
+      filter.replaceChildren();
+      const total = state.diagnosticGroups.reduce((sum, item) => sum + Number(item.count || 0), 0);
+      const groups = [{ device_id: '', device_name: '全部设备', count: total }].concat(state.diagnosticGroups);
+      groups.forEach(group => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = String(group.device_id || '') === state.diagnosticDeviceId ? 'current' : '';
+        const label = document.createElement('span');
+        const suffix = group.fingerprint ? ` · ${String(group.fingerprint).slice(-4)}` : '';
+        label.textContent = `${group.device_name || '未知设备'}${suffix}`;
+        const count = document.createElement('span');
+        count.className = 'device-count';
+        count.textContent = String(group.count || 0);
+        button.append(label, count);
+        button.onclick = () => {
+          state.diagnosticDeviceId = String(group.device_id || '');
+          load();
+        };
+        filter.appendChild(button);
+      });
+    }
+    function renderDiagnostics() {
+      const body = $('diagnostics');
+      body.replaceChildren();
+      $('diagnostics-empty').hidden = state.diagnostics.length > 0;
+      $('diagnostic-count').textContent = `${state.diagnostics.length} 份最近记录`;
+      state.diagnostics.forEach(item => {
+        const row = document.createElement('tr');
+        appendTextCell(row, formatTime(item.received_at), 'time');
+        const device = appendTextCell(row, `${item.device_name || '未知设备'}\n${item.platform || ''}`);
+        device.style.whiteSpace = 'pre-line';
+        const connection = appendTextCell(row, `${diagnosticStatus(item.network_status)} · ${diagnosticStatus(item.server_status)}`);
+        connection.className = item.server_status === 'online' ? 'app' : 'role';
+        appendTextCell(row, `${item.paired ? '已配对' : '未配对'} · ${item.listener_enabled ? '监听正常' : '监听未启用'}`);
+        const supportCell = document.createElement('td');
+        const supportId = document.createElement('span');
+        supportId.className = 'fingerprint';
+        supportId.textContent = item.diagnostic_id || '';
+        supportCell.appendChild(supportId);
+        row.appendChild(supportCell);
+        const latest = (item.entries || [])[0];
+        appendTextCell(row, latest ? `${latest.code}${latest.httpStatus ? ` · HTTP ${latest.httpStatus}` : ''}` : '无错误记录');
+        row.onclick = () => showDiagnosticDetail(item);
+        body.appendChild(row);
+      });
+      renderDiagnosticFilter();
+    }
+    function showDiagnosticDetail(item) {
+      const list = $('diagnostic-detail-list');
+      list.replaceChildren();
+      const entries = (item.entries || []).map(entry => {
+        const at = entry.at ? formatTime(entry.at) : '无时间';
+        return `${at} · ${entry.level || 'info'} · ${entry.code || 'UNKNOWN'}${entry.httpStatus ? ` · HTTP ${entry.httpStatus}` : ''}`;
+      }).join('\n') || '无错误记录';
+      const fields = [
+        ['支持编号', item.diagnostic_id],
+        ['设备', `${item.device_name || ''} · ${item.fingerprint || ''}`],
+        ['系统', `${item.platform || ''} ${item.platform_version || ''}`],
+        ['软件版本', item.app_version || ''],
+        ['网络', diagnosticStatus(item.network_status)],
+        ['服务器', diagnosticStatus(item.server_status)],
+        ['配对', item.paired ? '正常' : '未配对'],
+        ['通知监听', item.listener_enabled ? '正常' : '未启用'],
+        ['后台限制', item.background_restricted ? '受限制' : '正常'],
+        ['状态记录', entries],
+      ];
+      fields.forEach(([label, value]) => {
+        const term = document.createElement('dt');
+        term.textContent = label;
+        const description = document.createElement('dd');
+        description.className = 'full-body';
+        description.textContent = String(value ?? '');
+        list.append(term, description);
+      });
+      $('diagnostic-detail').showModal();
+    }
+    function showDetail(event) {
+      const destinations = (event.destinations || []).map(item => `${item.name} · ${item.fingerprint}`).join('\n') || '本机旧链路';
+      const fields = [
+        ['时间', formatTime(event.received_at)],
+        ['发送设备', `${event.sender_name} · ${event.sender_fingerprint || 'LEGACY'}`],
+        ['接收设备', destinations],
+        ['来源 App', `${event.app_name}${event.package_name ? ` · ${event.package_name}` : ''}`],
+        ['标题', event.title || ''],
+        ['正文', event.body || ''],
+        ['隐私模式', event.privacy_mode || 'full'],
+        ['事件 ID', event.event_id || ''],
+      ];
+      $('detail-list').innerHTML = fields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd class="full-body">${escapeHtml(value)}</dd>`).join('');
+      $('detail').showModal();
+    }
+    async function load() {
+      const requestId = ++state.requestId;
+      $('status').textContent = '正在读取服务器';
+      const query = encodeURIComponent($('search').value.trim());
+      const sender = encodeURIComponent(state.senderId);
+      const offset = (state.page - 1) * state.pageSize;
+      try {
+        const diagnosticDevice = encodeURIComponent(state.diagnosticDeviceId);
+        const [eventsResponse, statsResponse, devicesResponse, diagnosticsResponse, healthResponse] = await Promise.all([
+          fetch(`/audit/api/events?limit=${state.pageSize}&offset=${offset}&q=${query}&sender=${sender}`, { cache: 'no-store' }),
+          fetch('/audit/api/stats', { cache: 'no-store' }),
+          fetch('/api/devices', { cache: 'no-store' }),
+          fetch(`/audit/api/diagnostics?limit=100&device=${diagnosticDevice}`, { cache: 'no-store' }),
+          fetch('/audit/api/health', { cache: 'no-store' })
+        ]);
+        if (!eventsResponse.ok || !statsResponse.ok || !devicesResponse.ok || !diagnosticsResponse.ok || !healthResponse.ok) throw new Error('HTTP error');
+        const eventsBody = await eventsResponse.json();
+        const statsBody = await statsResponse.json();
+        const devicesBody = await devicesResponse.json();
+        const diagnosticsBody = await diagnosticsResponse.json();
+        const healthBody = await healthResponse.json();
+        if (requestId !== state.requestId) return;
+        state.events = eventsBody.events || [];
+        state.total = Number(eventsBody.total || 0);
+        state.deviceGroups = eventsBody.deviceGroups || [];
+        state.devices = devicesBody.devices || [];
+        state.diagnostics = diagnosticsBody.diagnostics || [];
+        state.diagnosticGroups = diagnosticsBody.deviceGroups || [];
+        state.health = healthBody;
+        const totalPages = Math.max(1, Math.ceil(state.total / state.pageSize));
+        if (state.page > totalPages) {
+          state.page = totalPages;
+          load();
+          return;
+        }
+        $('count').textContent = state.total;
+        $('usage').textContent = `${formatBytes(statsBody.stats.bytes)} / ${formatBytes(statsBody.stats.maxBytes)}`;
+        $('status').textContent = `服务器在线 · ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`;
+        renderHealth(healthBody);
+        render();
+        renderDeviceFilter();
+        renderDevices();
+        renderDiagnostics();
+      } catch (error) {
+        $('status').textContent = '服务器暂时无法访问';
+        renderHealthUnavailable();
+      }
+    }
+    async function saveRate(deviceId) {
+      const input = document.querySelector(`[data-rate-for="${deviceId}"]`);
+      const rateLimit = Math.max(10, Math.min(600, Number(input.value || 120)));
+      const response = await fetch('/api/devices/rate', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ deviceId, rateLimit })
+      });
+      if (response.ok) load();
+    }
+    async function revokeDevice(deviceId) {
+      if (!confirm('撤销后，这台设备需要重新配对。')) return;
+      const response = await fetch('/api/devices/revoke', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ deviceId })
+      });
+      if (response.ok) load();
+    }
+    let searchTimer;
+    $('search').addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { state.page = 1; load(); }, 260);
+    });
+    $('refresh').onclick = load;
+    $('close').onclick = () => $('detail').close();
+    $('diagnostic-close').onclick = () => $('diagnostic-detail').close();
+    load();
+    setInterval(load, 5000);
+  </script>
+</body>
+</html>

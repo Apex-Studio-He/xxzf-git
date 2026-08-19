@@ -1,0 +1,23 @@
+[Unit]
+Description=XXZF notification relay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=xxzf
+Group=xxzf
+WorkingDirectory=/opt/xxzf/server
+EnvironmentFile=/etc/xxzf/xxzf.env
+ExecStart=/usr/bin/python3 /opt/xxzf/server/server.py
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/xxzf
+
+[Install]
+WantedBy=multi-user.target

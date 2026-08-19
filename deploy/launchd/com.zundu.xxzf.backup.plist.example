@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.zundu.xxzf.backup</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>/ABSOLUTE/PATH/TO/xxzf/server/backup_server_data.sh</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>XXZF_SOURCE_DIR</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data</string>
+    <key>XXZF_BACKUP_DIR</key><string>/ABSOLUTE/ENCRYPTED/PATH/xxzf-backups</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>StartInterval</key><integer>3600</integer>
+</dict>
+</plist>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-labelledby="title desc">
+  <title id="title">XXZF 工作流程</title>
+  <desc id="desc">Android 经自建 HTTPS 服务转发通知到 macOS、Windows 或 Bark</desc>
+  <rect width="1200" height="540" rx="32" fill="#f6f8fb"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="70" y="78" fill="#172235" font-size="36" font-weight="800">一张图看懂 XXZF</text>
+    <text x="70" y="116" fill="#617086" font-size="20">通知经过你自己的 HTTPS 服务，再送到你选择的设备。</text>
+    <g transform="translate(64 168)">
+      <rect width="240" height="220" rx="26" fill="#ffffff" stroke="#dbe3ed" stroke-width="2"/>
+      <circle cx="120" cy="70" r="39" fill="#e9fbf3"/>
+      <rect x="96" y="37" width="48" height="67" rx="11" fill="none" stroke="#16a06b" stroke-width="5"/>
+      <circle cx="120" cy="93" r="3" fill="#16a06b"/>
+      <text x="120" y="145" fill="#142235" font-size="25" text-anchor="middle" font-weight="800">Android</text>
+      <text x="120" y="179" fill="#68788e" font-size="18" text-anchor="middle">只读你允许的应用</text>
+    </g>
+    <path d="M328 278h105" stroke="#5e82b8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M420 266l15 12-15 12" fill="none" stroke="#5e82b8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(458 168)">
+      <rect width="284" height="220" rx="26" fill="#172d46"/>
+      <circle cx="142" cy="68" r="40" fill="#274965"/>
+      <path d="M113 70h58M122 52h40M124 88h36" stroke="#7ce0b8" stroke-width="6" stroke-linecap="round"/>
+      <text x="142" y="145" fill="#ffffff" font-size="25" text-anchor="middle" font-weight="800">你自己的服务器</text>
+      <text x="142" y="180" fill="#c5d4e4" font-size="18" text-anchor="middle">HTTPS · 配对 · 路由</text>
+    </g>
+    <path d="M766 278h94" stroke="#5e82b8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M848 266l15 12-15 12" fill="none" stroke="#5e82b8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(886 148)">
+      <rect width="250" height="84" rx="22" fill="#ffffff" stroke="#dbe3ed" stroke-width="2"/>
+      <circle cx="38" cy="42" r="22" fill="#e8f1ff"/>
+      <text x="76" y="50" fill="#142235" font-size="23" font-weight="750">macOS</text>
+      <rect y="99" width="250" height="84" rx="22" fill="#ffffff" stroke="#dbe3ed" stroke-width="2"/>
+      <circle cx="38" cy="141" r="22" fill="#e8f1ff"/>
+      <text x="76" y="149" fill="#142235" font-size="23" font-weight="750">Windows</text>
+      <rect y="198" width="250" height="84" rx="22" fill="#ffffff" stroke="#dbe3ed" stroke-width="2"/>
+      <circle cx="38" cy="240" r="22" fill="#e9fbf3"/>
+      <text x="76" y="248" fill="#142235" font-size="23" font-weight="750">Bark → iPhone</text>
+    </g>
+    <rect x="64" y="430" width="1072" height="66" rx="18" fill="#eaf8f2"/>
+    <text x="600" y="471" fill="#176b4d" font-size="20" text-anchor="middle" font-weight="700">隐藏内容模式：只转发“来自哪个 App + 通知标题”，不显示正文</text>
+  </g>
+</svg>

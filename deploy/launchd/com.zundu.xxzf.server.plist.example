@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.zundu.xxzf.server</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/ABSOLUTE/PATH/TO/xxzf/server/server.py</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/ABSOLUTE/PATH/TO/xxzf/server</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOST</key><string>127.0.0.1</string>
+    <key>PORT</key><string>8787</string>
+    <key>DATA_DIR</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data</string>
+    <key>XXZF_TOKEN_FILE</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/notify-token.txt</string>
+    <key>XXZF_AUDIT_DIR</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/notification_archive</string>
+    <key>XXZF_DIAGNOSTIC_DIR</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/diagnostics</string>
+    <key>XXZF_BARK_SECRET_FILE</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/bark-secrets.json</string>
+    <key>XXZF_PUBLIC_BASE</key><string>https://example.com/xxzf</string>
+    <key>XXZF_PUBLIC_ORIGIN</key><string>https://example.com</string>
+    <key>XXZF_BARK_BIND_PAGE</key><string>https://example.com/xxzf/bark/</string>
+    <key>XXZF_BARK_ALLOWED_ORIGINS</key><string>https://api.day.app</string>
+    <key>PYTHONUNBUFFERED</key><string>1</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>Umask</key><integer>63</integer>
+  <key>StandardOutPath</key><string>/ABSOLUTE/PRIVATE/PATH/logs/xxzf-server.log</string>
+  <key>StandardErrorPath</key><string>/ABSOLUTE/PRIVATE/PATH/logs/xxzf-server.err.log</string>
+</dict>
+</plist>
