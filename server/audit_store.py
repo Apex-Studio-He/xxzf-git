@@ -174,6 +174,20 @@ class AuditStore:
             [like, like, like, like],
         )
 
+    @classmethod
+    def _sender_search_filters(cls, search, sender_id):
+        clauses = []
+        values = []
+        sender_id = bounded_text(sender_id, 96).strip()
+        if sender_id:
+            clauses.append("sender_id = ?")
+            values.append(sender_id)
+        search_clause, search_values = cls._search_filter(search)
+        if search_clause:
+            clauses.append(search_clause)
+            values.extend(search_values)
+        return clauses, values
+
     def query(self, limit=100, before=None, search="", offset=0, sender_id=""):
         limit = max(1, min(int(limit or 100), 500))
         offset = max(0, int(offset or 0))
@@ -182,14 +196,9 @@ class AuditStore:
         if before:
             clauses.append("row_id < ?")
             values.append(int(before))
-        sender_id = bounded_text(sender_id, 96).strip()
-        if sender_id:
-            clauses.append("sender_id = ?")
-            values.append(sender_id)
-        search_clause, search_values = self._search_filter(search)
-        if search_clause:
-            clauses.append(search_clause)
-            values.extend(search_values)
+        shared_clauses, shared_values = self._sender_search_filters(search, sender_id)
+        clauses.extend(shared_clauses)
+        values.extend(shared_values)
         where = (" WHERE " + " AND ".join(clauses)) if clauses else ""
         values.extend([limit, offset])
         with self.lock, self._connect() as connection:
@@ -210,16 +219,7 @@ class AuditStore:
         return result
 
     def count(self, search="", sender_id=""):
-        clauses = []
-        values = []
-        sender_id = bounded_text(sender_id, 96).strip()
-        if sender_id:
-            clauses.append("sender_id = ?")
-            values.append(sender_id)
-        search_clause, search_values = self._search_filter(search)
-        if search_clause:
-            clauses.append(search_clause)
-            values.extend(search_values)
+        clauses, values = self._sender_search_filters(search, sender_id)
         where = (" WHERE " + " AND ".join(clauses)) if clauses else ""
         with self.lock, self._connect() as connection:
             row = connection.execute(

@@ -34,6 +34,44 @@ def _enum(value, allowed, default="unknown"):
     return normalized if normalized in allowed else default
 
 
+def _bounded_integer(value, maximum):
+    try:
+        return max(0, min(int(value or 0), maximum))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _bounded_timestamp(value):
+    try:
+        timestamp = int(value or 0)
+    except (TypeError, ValueError):
+        return 0
+    return max(0, min(timestamp, _now_ms() + 86_400_000))
+
+
+def _normalized_entry(raw):
+    if not isinstance(raw, dict):
+        return None
+    entry = {
+        "at": _bounded_timestamp(raw.get("at")),
+        "level": _enum(raw.get("level"), {"info", "warning", "error"}, "info"),
+        "code": _token(raw.get("code") or "UNKNOWN", 48).upper() or "UNKNOWN",
+    }
+    http_status = _bounded_integer(raw.get("httpStatus"), 999)
+    if http_status:
+        entry["httpStatus"] = http_status
+    return entry
+
+
+def _normalized_entries(raw_entries):
+    entries = []
+    for raw in (raw_entries or [])[:MAX_ENTRIES]:
+        entry = _normalized_entry(raw)
+        if entry is not None:
+            entries.append(entry)
+    return entries
+
+
 class DiagnosticStore:
     def __init__(self, directory, max_bytes=None):
         self.directory = Path(directory)
@@ -123,26 +161,7 @@ class DiagnosticStore:
     def record(self, payload, device):
         payload = payload if isinstance(payload, dict) else {}
         device = device if isinstance(device, dict) else {}
-        entries = []
-        for raw in (payload.get("entries") or [])[:MAX_ENTRIES]:
-            if not isinstance(raw, dict):
-                continue
-            try:
-                timestamp = max(0, min(int(raw.get("at") or 0), _now_ms() + 86_400_000))
-            except (TypeError, ValueError):
-                timestamp = 0
-            try:
-                http_status = max(0, min(int(raw.get("httpStatus") or 0), 999))
-            except (TypeError, ValueError):
-                http_status = 0
-            entry = {
-                "at": timestamp,
-                "level": _enum(raw.get("level"), {"info", "warning", "error"}, "info"),
-                "code": _token(raw.get("code") or "UNKNOWN", 48).upper() or "UNKNOWN",
-            }
-            if http_status:
-                entry["httpStatus"] = http_status
-            entries.append(entry)
+        entries = _normalized_entries(payload.get("entries"))
 
         diagnostic_id = "D-" + secrets.token_hex(6).upper()
         values = (
