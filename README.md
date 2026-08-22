@@ -40,7 +40,7 @@ XXZF 可以把 Android 上的通知送到这些设备。比如快递、外卖、
 - **Android 发送端**：选择要转发的 App，后台监听通知，管理已连接设备。
 - **macOS 接收端**：六位码配对、系统通知、断线重连、更新校验。
 - **Windows 接收端**：配对、后台接收、系统通知和安全更新。
-- **iPhone / Bark**：不用自签 iOS App，用 App Store 中的 Bark 接收。
+- **iPhone / Bark**：不用自签 iOS App，用 App Store 中的 Bark 接收；通知可显示 `安卓-应用名` 与 Android App 图标。
 - **Python 服务端**：配对、设备密钥、通知路由、限速、诊断和 Bark 绑定。
 - **Bark 绑定网页**：完整 HTML / CSS / JavaScript 源码，跟服务端一起放到你的域名下。
 - **部署与更新工具**：Nginx、systemd、launchd 模板，三端签名更新清单和校验工具。
@@ -104,14 +104,14 @@ Codex 会先告诉你缺少什么环境，不会在没说明时突然下载一�
 4. 从 Bark 首页复制完整测试地址，粘贴到绑定页，再输入六位码。
 5. 回到 Android 的“管理 iPhone”，可以单独测试、查看状态或删除某一台。
 
-默认使用 `https://api.day.app`。服务端只保存发送所需的 Bark 服务 origin 和 device key，且使用独立、权限受限的私密存储文件。
+默认使用 `https://api.day.app`。也可以在 `XXZF_BARK_ALLOWED_BASES` 中精确加入自己的 Bark HTTPS base（支持安全路径前缀），然后在 Bark App 中添加同一个服务器。服务端只保存发送所需的 Bark base 和 device key，且使用独立、权限受限的私密存储文件。
 
 ## 通知会显示什么？
 
 默认的产品思路是“知道有事，但不在大屏上暴露细节”：
 
 ```text
-标题：微信 · 新消息
+标题：安卓-微信
 正文：（不转发原始内容）
 ```
 

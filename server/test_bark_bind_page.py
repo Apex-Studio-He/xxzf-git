@@ -25,7 +25,9 @@ class BarkBindingPagePolicyTests(unittest.TestCase):
         self.assertIn("window.history.replaceState", script)
         self.assertIn('fetch("/xxzf/v1/bark/enroll/claim"', script)
         self.assertIn('credentials: "omit"', script)
-        self.assertIn('parsed.hostname.toLowerCase() === "api.day.app"', script)
+        self.assertIn("function validBarkUrl(value)", script)
+        self.assertIn("请粘贴 Bark 首页复制的完整 HTTPS 测试地址", script)
+        self.assertNotIn('parsed.hostname.toLowerCase() === "api.day.app"', script)
         self.assertNotIn("localStorage", script)
         self.assertNotIn("sessionStorage", script)
         self.assertNotIn("console.", script)
@@ -42,6 +44,16 @@ class BarkBindingPagePolicyTests(unittest.TestCase):
         self.assertIn("index index.html;", routes)
         self.assertIn("frame-ancestors 'none'", routes)
         self.assertIn('X-Robots-Tag "noindex, nofollow, noarchive"', routes)
+
+    def test_bark_icon_route_is_read_only_rate_limited_and_unlogged(self):
+        routes = ROUTES.read_text(encoding="utf-8")
+        marker = "location ^~ /xxzf/v1/bark/icons/ {"
+        self.assertEqual(1, routes.count(marker))
+        block = routes[routes.index(marker):routes.index("\n    location ", routes.index(marker) + 1)]
+        self.assertIn("limit_except GET { deny all; }", block)
+        self.assertIn("access_log off;", block)
+        self.assertIn("limit_req zone=zundu_api_per_ip", block)
+        self.assertIn("proxy_pass http://127.0.0.1:8787/api/v1/bark/icons/;", block)
 
     def test_server_generates_the_new_binding_origin(self):
         source = SERVER.read_text(encoding="utf-8")

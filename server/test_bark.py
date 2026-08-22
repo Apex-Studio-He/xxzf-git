@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import base64
+import hashlib
 import io
 import http.client
 import json
@@ -204,6 +206,81 @@ class BarkForwardingTests(unittest.TestCase):
         self.assertEqual("https://api.day.app/push", request.full_url)
         self.assertNotIn("per-device-private-key", request.full_url)
         self.assertEqual("per-device-private-key", payload["device_key"])
+
+    def test_android_source_uses_platform_prefix_and_content_addressed_icon(self):
+        icon_id = "a" * 64
+        with mock.patch("urllib.request.urlopen", return_value=_Response()) as opened:
+            result = server.send_bark(
+                "https://api.day.app",
+                "per-device-private-key",
+                {
+                    "packageName": "com.example.chat",
+                    "appName": "微信",
+                    "title": "新消息",
+                    "text": "正文不会发送给 Bark",
+                    "privacyMode": "full",
+                    "appIconId": icon_id,
+                },
+            )
+        payload = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual(200, result["status"])
+        self.assertEqual("安卓-微信", payload["title"])
+        self.assertEqual(
+            "https://example.com/xxzf/v1/bark/icons/" + icon_id + ".png",
+            payload["icon"],
+        )
+        self.assertNotIn("正文不会发送给 Bark", opened.call_args.args[0].data.decode("utf-8"))
+
+    def test_valid_png_is_stored_by_hash_without_retaining_base64(self):
+        png = (
+            b"\x89PNG\r\n\x1a\n"
+            + (13).to_bytes(4, "big")
+            + b"IHDR"
+            + (1).to_bytes(4, "big")
+            + (1).to_bytes(4, "big")
+            + b"\x08\x06\x00\x00\x00"
+            + b"\x00\x00\x00\x00"
+            + b"\x00\x00\x00\x00IEND\x00\x00\x00\x00"
+        )
+        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(
+            server, "BARK_ICON_DIR", Path(temporary)
+        ):
+            event = server.normalize_event({
+                "packageName": "com.example.chat",
+                "appName": "微信",
+                "title": "测试",
+                "appIconPng": base64.b64encode(png).decode("ascii"),
+            })
+            icon_id = hashlib.sha256(png).hexdigest()
+            self.assertEqual(icon_id, event["appIconId"])
+            self.assertEqual(png, (Path(temporary) / (icon_id + ".png")).read_bytes())
+            self.assertNotIn("appIconPng", event)
+
+    def test_provider_http_error_is_classified_without_internal_log(self):
+        error = urllib.error.HTTPError(
+            "https://api.day.app/push", 400, "bad request", {}, io.BytesIO(b'{"code":400}')
+        )
+        with mock.patch("urllib.request.urlopen", side_effect=error), mock.patch.object(
+            server, "record_internal_error"
+        ) as logged:
+            result = server.send_bark(
+                "https://api.day.app",
+                "per-device-private-key",
+                {"appName": "测试", "title": "通知"},
+            )
+        self.assertEqual(400, result["status"])
+        self.assertEqual('{"code":400}', result["body"])
+        logged.assert_not_called()
+
+    def test_allowlisted_prefixed_bark_server_extracts_key_after_prefix(self):
+        with mock.patch.object(
+            server, "BARK_ALLOWED_BASES", frozenset({"https://push.example.com/bark-api"})
+        ):
+            base, key = server.parse_bark_test_url(
+                "https://push.example.com/bark-api/AbCdEf0123456789_test/标题/正文"
+            )
+        self.assertEqual("https://push.example.com/bark-api", base)
+        self.assertEqual("AbCdEf0123456789_test", key)
 
     def test_bark_only_sender_is_routed_without_global_duplicate(self):
         sender = {"device_id": "s_customer", "name": "客户手机", "fingerprint": "ABC"}

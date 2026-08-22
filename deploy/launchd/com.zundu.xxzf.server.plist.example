@@ -20,10 +20,11 @@
     <key>XXZF_AUDIT_DIR</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/notification_archive</string>
     <key>XXZF_DIAGNOSTIC_DIR</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/diagnostics</string>
     <key>XXZF_BARK_SECRET_FILE</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/bark-secrets.json</string>
+    <key>XXZF_BARK_ICON_DIR</key><string>/ABSOLUTE/PRIVATE/PATH/xxzf-data/bark-icons</string>
     <key>XXZF_PUBLIC_BASE</key><string>https://example.com/xxzf</string>
     <key>XXZF_PUBLIC_ORIGIN</key><string>https://example.com</string>
     <key>XXZF_BARK_BIND_PAGE</key><string>https://example.com/xxzf/bark/</string>
-    <key>XXZF_BARK_ALLOWED_ORIGINS</key><string>https://api.day.app</string>
+    <key>XXZF_BARK_ALLOWED_BASES</key><string>https://api.day.app</string>
     <key>PYTHONUNBUFFERED</key><string>1</string>
   </dict>
   <key>RunAtLoad</key><true/>

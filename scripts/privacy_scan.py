@@ -50,6 +50,17 @@ SECRET_PATTERNS = {
         r"(?!<|\$\{|example|change[-_ ]?me)[^#\s][^#\r\n]{5,}$"
     ),
 }
+PROHIBITED_SOURCE_PATTERNS = {
+    "automatic SCP upload": re.compile(r"(?m)(?:^|[;&|]\s*)scp(?:\s|$)"),
+    "remote update deployment variable": re.compile(
+        r"\b(?:XXZF_UPDATE_SSH_TARGET|XXZF_UPDATE_REMOTE_ROOT|XXZF_MINI_SSH_TARGET)\b"
+    ),
+    "removed remote deployment script": re.compile(
+        r"\b(?:deploy_test_updates|install_test_update_set_remote|"
+        r"verify_remote_update_routes|test_android_live_notification|"
+        r"install_public_nginx_route)\.sh\b"
+    ),
+}
 URL_RE = re.compile(r"https?://([A-Za-z0-9._:%@\[\]{}-]+)", re.IGNORECASE)
 EMAIL_RE = re.compile(r"(?<![\w.+-])([\w.+-]+@([A-Za-z0-9.-]+\.[A-Za-z]{2,}))")
 MAC_USER_RE = re.compile(r"/Users/([^/\s\"']+)")
@@ -220,6 +231,9 @@ def main():
         for label, pattern in SECRET_PATTERNS.items():
             if pattern.search(text):
                 violations.append(f"{relative}: possible {label}")
+        for label, pattern in PROHIBITED_SOURCE_PATTERNS.items():
+            if pattern.search(text):
+                violations.append(f"{relative}: {label}")
         for match in EMAIL_RE.finditer(text):
             local = match.group(1).split("@", 1)[0]
             domain = match.group(2).lower()

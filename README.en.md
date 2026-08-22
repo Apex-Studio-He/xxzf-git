@@ -19,7 +19,7 @@ _Concept animation, not a device recording. It contains no real account, device,
 - Android sender: notification listener, app allowlist, background relay, destination management, and Bark enrollment.
 - Python server: pairing, per-device credentials, rate limiting, routing, bounded archives, diagnostics, and isolated Bark-secret storage.
 - macOS and Windows receivers: six-digit pairing, native notifications, reconnect logic, and signed-update verification.
-- iPhone: the App Store version of Bark; no native XXZF iOS app or self-signing workflow is required.
+- iPhone: the App Store version of Bark; no native XXZF iOS app or self-signing workflow is required. Bark can show the Android app name and app icon.
 
 ## Requirements
 
@@ -76,7 +76,7 @@ On Windows PowerShell:
 
 - No business endpoint works until the operator explicitly configures and rebuilds the clients.
 - Runtime clients contact only the pinned self-hosted XXZF HTTPS origin and pinned update origin.
-- Bark support contacts an allowlisted Bark origin; the default is only `https://api.day.app`.
+- Bark support contacts an exactly allowlisted HTTPS base; the default is only `https://api.day.app`, while self-hosted path prefixes can be configured explicitly.
 - There is no advertising, analytics, crash reporting, device fingerprinting, backdoor account, or universal pairing key.
 - Databases, archives, diagnostics, Bark keys, compatibility tokens, and signing materials must stay outside the source tree with private filesystem permissions.
 - The audit UI is loopback-only and has no public Nginx route.

@@ -63,8 +63,8 @@ echo "==> Link APK resources"
   --java "$BUILD_DIR/gen" \
   --min-sdk-version 26 \
   --target-sdk-version "$ANDROID_API" \
-  --version-code 26 \
-  --version-name 0.9.16 \
+  --version-code 28 \
+  --version-name 0.9.18 \
   -R "$BUILD_DIR/res.zip" \
   -o "$BUILD_DIR/app-unsigned.apk"
 

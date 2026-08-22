@@ -32,4 +32,5 @@ mkdir -p "$OUT"
 "$JAVA_HOME/bin/java" -cp "$OUT" com.zundu.notifybridge.BarkDestinationTest
 python3 "$HERE/tests/sender_management_policy_test.py"
 python3 "$HERE/tests/bark_management_policy_test.py"
+python3 "$HERE/tests/service_heartbeat_policy_test.py"
 echo "Android receiver formatter checks passed"

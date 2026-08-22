@@ -38,17 +38,18 @@
     submit.textContent = busy ? "正在验证并绑定" : "绑定并发送测试";
   }
 
-  function validOfficialBarkUrl(value) {
+  function validBarkUrl(value) {
     try {
       var parsed = new URL(value);
       var segments = parsed.pathname.split("/").filter(Boolean);
       return parsed.protocol === "https:"
-        && parsed.hostname.toLowerCase() === "api.day.app"
-        && (parsed.port === "" || parsed.port === "443")
+        && parsed.hostname !== ""
         && parsed.username === ""
         && parsed.password === ""
         && segments.length > 0
-        && /^[A-Za-z0-9_-]{16,200}$/.test(decodeURIComponent(segments[0]));
+        && segments.some(function (segment) {
+          return /^[A-Za-z0-9_-]{16,200}$/.test(decodeURIComponent(segment));
+        });
     } catch (_error) {
       return false;
     }
@@ -63,8 +64,8 @@
       manualCode.focus();
       return;
     }
-    if (!validOfficialBarkUrl(url)) {
-      show("请粘贴 Bark 首页复制的完整 https://api.day.app/ 测试地址", "error");
+    if (!validBarkUrl(url)) {
+      show("请粘贴 Bark 首页复制的完整 HTTPS 测试地址", "error");
       barkUrl.focus();
       return;
     }

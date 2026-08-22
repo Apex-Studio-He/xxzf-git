@@ -28,6 +28,8 @@ Merge `deploy/nginx/xxzf-server.conf.example` into the HTTPS virtual host and co
 
 Keep the exact route allowlist. Do not replace it with a broad `/xxzf/` proxy. Do not expose `/audit/`, `/api/config`, or the loopback server port. Use an SSH tunnel to reach the audit UI.
 
+Keep `/xxzf/v1/bark/icons/` public and read-only when using Bark app icons. Set `XXZF_PUBLIC_BASE` to the same public HTTPS base so Bark can retrieve those content-addressed PNG files. A self-hosted Bark Server with a path prefix can be allowlisted exactly through `XXZF_BARK_ALLOWED_BASES`.
+
 ## Client endpoint pinning
 
 Replace `https://example.com/xxzf` with your public base in:

@@ -2,6 +2,27 @@
     # Cross-origin browser requests are intentionally unsupported; the parent
     # HTTPS server rejects OPTIONS, while native clients use direct requests.
 
+    # Bark fetches content-addressed Android app icons from this read-only
+    # route. Hash filenames contain no app or package name, and access logging
+    # is disabled because the files are immutable delivery assets.
+    location ^~ /xxzf/v1/bark/icons/ {
+        auth_basic off;
+        access_log off;
+        limit_except GET { deny all; }
+        limit_req zone=zundu_api_per_ip burst=30 nodelay;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        proxy_pass http://127.0.0.1:8787/api/v1/bark/icons/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 10s;
+        proxy_send_timeout 10s;
+        proxy_buffering off;
+    }
+
     location = /xxzf/notify {
         auth_basic off;
         access_log off;

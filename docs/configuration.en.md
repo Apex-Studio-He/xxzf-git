@@ -11,11 +11,12 @@
 | `XXZF_AUDIT_DIR` | Bounded notification archive |
 | `XXZF_DIAGNOSTIC_DIR` | Bounded diagnostics directory |
 | `XXZF_BARK_SECRET_FILE` | Mode-`0600` Bark device-key store |
+| `XXZF_BARK_ICON_DIR` | Private content-addressed Android app-icon cache |
 | `XXZF_APK_FILE` | Local release APK exposed only by the local management UI |
 | `XXZF_PUBLIC_BASE` | Public client API base, such as `https://notify.example.com/xxzf` |
 | `XXZF_PUBLIC_ORIGIN` | Canonical HTTPS origin used for Host/origin validation |
 | `XXZF_BARK_BIND_PAGE` | Public one-time Bark enrollment page |
-| `XXZF_BARK_ALLOWED_ORIGINS` | Comma-separated allowlist of Bark HTTPS origins |
+| `XXZF_BARK_ALLOWED_BASES` | Exact comma-separated allowlist of Bark HTTPS bases, optionally with safe path prefixes |
 
 ## Android release signing
 
@@ -31,6 +32,6 @@ Set `XXZF_BUILD_VARIANT=Release`, `XXZF_WINDOWS_SIGN_CERT_SHA256`, and optionall
 
 ## Update publishing
 
-`XXZF_UPDATE_PRIVATE_KEY` selects the private RSA key outside the repository. `XXZF_UPDATE_SSH_TARGET` is required for remote deployment; deployment refuses to connect when it is absent. `XXZF_UPDATE_REMOTE_ROOT` selects the remote static directory.
+`XXZF_UPDATE_PRIVATE_KEY` selects the private RSA key outside the repository. The publisher writes signed artifacts only to a local output directory. This repository deliberately contains no SSH, SCP, or automatic server-upload workflow.
 
 The API and update endpoints are deliberately compiled into each client. See [deployment.en.md](deployment.en.md) for the exact source files that must be updated and tested for a self-hosted instance.

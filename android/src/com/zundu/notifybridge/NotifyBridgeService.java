@@ -1,8 +1,11 @@
 package com.zundu.notifybridge;
 
 import android.app.Notification;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,21 +13,39 @@ import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class NotifyBridgeService extends NotificationListenerService {
     private static final String TAG = "XXZFListener";
+    private static final int BARK_ICON_SIZE_PX = 64;
+    private static final int BARK_ICON_MAX_BYTES = 32 * 1024;
+    private static final long HEARTBEAT_INTERVAL_MS = 60 * 1000L;
     private static volatile boolean running;
     private final RecentNotificationCache recent = new RecentNotificationCache(256);
+    private final Map<String, String> appIconCache = new LinkedHashMap<>();
     private final Handler updateHandler = new Handler(Looper.getMainLooper());
     private final Runnable updateCheck = new Runnable() {
         @Override public void run() {
             UpdateManager.checkInBackground(NotifyBridgeService.this);
             updateHandler.postDelayed(this, UpdateManager.CHECK_INTERVAL_MS);
+        }
+    };
+    private final Runnable heartbeat = new Runnable() {
+        @Override public void run() {
+            ServerClient.check(NotifyBridgeService.this, new ServerClient.StatusCallback() {
+                @Override public void done(String status) {
+                    // Authentication itself refreshes the server-side last-seen time.
+                }
+            });
+            updateHandler.postDelayed(this, HEARTBEAT_INTERVAL_MS);
         }
     };
 
@@ -33,11 +54,13 @@ public class NotifyBridgeService extends NotificationListenerService {
         super.onCreate();
         running = true;
         updateHandler.post(updateCheck);
+        updateHandler.post(heartbeat);
     }
 
     @Override
     public void onDestroy() {
         updateHandler.removeCallbacks(updateCheck);
+        updateHandler.removeCallbacks(heartbeat);
         running = false;
         ListenerBinding.markConnected(false);
         super.onDestroy();
@@ -114,6 +137,8 @@ public class NotifyBridgeService extends NotificationListenerService {
             payload.put("text", outText);
             payload.put("postTime", sbn.getPostTime());
             payload.put("privacyMode", privacy);
+            String appIconPng = appIconPng(pkg);
+            if (!TextUtils.isEmpty(appIconPng)) payload.put("appIconPng", appIconPng);
 
             final String logName = appName;
             BridgeSender.send(this, payload, new BridgeSender.Callback() {
@@ -167,6 +192,41 @@ public class NotifyBridgeService extends NotificationListenerService {
         } catch (Exception e) {
             return pkg;
         }
+    }
+
+    private String appIconPng(String pkg) {
+        synchronized (appIconCache) {
+            if (appIconCache.containsKey(pkg)) return appIconCache.get(pkg);
+        }
+        String encoded = "";
+        Bitmap bitmap = null;
+        try {
+            Drawable icon = getPackageManager().getApplicationIcon(pkg).mutate();
+            bitmap = Bitmap.createBitmap(
+                    BARK_ICON_SIZE_PX, BARK_ICON_SIZE_PX, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            icon.setBounds(0, 0, BARK_ICON_SIZE_PX, BARK_ICON_SIZE_PX);
+            icon.draw(canvas);
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)) {
+                byte[] bytes = output.toByteArray();
+                if (bytes.length <= BARK_ICON_MAX_BYTES) {
+                    encoded = Base64.encodeToString(bytes, Base64.NO_WRAP);
+                }
+            }
+        } catch (Exception ignored) {
+            encoded = "";
+        } finally {
+            if (bitmap != null) bitmap.recycle();
+        }
+        synchronized (appIconCache) {
+            if (appIconCache.size() >= 64) {
+                String first = appIconCache.keySet().iterator().next();
+                appIconCache.remove(first);
+            }
+            appIconCache.put(pkg, encoded);
+        }
+        return encoded;
     }
 
     private static String safe(CharSequence value) {

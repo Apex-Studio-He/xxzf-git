@@ -204,25 +204,6 @@ class ActiveTransportPolicyTests(unittest.TestCase):
         )[0]
         self.assertIn("limit_conn zundu_conn_per_ip 4;", events)
 
-    def test_route_installer_is_atomic_and_requires_an_explicit_target(self):
-        installer = (ROOT / "scripts" / "install_public_nginx_route.sh").read_text(
-            "utf-8"
-        )
-        self.assertIn('SSH_TARGET="${1:-}"', installer)
-        self.assertIn("Usage: install_public_nginx_route.sh", installer)
-        self.assertIn("nginx/xxzf_public_routes.inc", installer)
-        self.assertIn("restore_route", installer)
-        self.assertIn('if [ "${1:-}" = "--check" ]', installer)
-        self.assertIn(
-            '"    location = /xxzf/v1/receiver/senders/revoke {"', installer
-        )
-        self.assertIn("/bin/mv \"$STAGED\" \"$ROUTES\"", installer)
-        self.assertIn('"$NGINX" -t -c "$MAIN"', installer)
-        self.assertNotIn("zundu_nas_routes.inc", installer)
-        self.assertNotIn("@192.", installer)
-
-
-class RetiredNodeServerTests(unittest.TestCase):
     def test_node_server_is_a_fail_closed_non_listening_stub(self):
         source = RETIRED_NODE_SERVER.read_text("utf-8")
         for forbidden in (

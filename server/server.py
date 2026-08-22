@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import base64
 import hashlib
 import html
 import ipaddress
@@ -11,6 +12,7 @@ import socket
 import subprocess
 import threading
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -61,6 +63,9 @@ DIAGNOSTIC_DIR = Path(os.environ.get(
 BARK_SECRET_FILE = Path(os.environ.get(
     "XXZF_BARK_SECRET_FILE", DATA_DIR / "bark-secrets.json"
 ))
+BARK_ICON_DIR = Path(os.environ.get(
+    "XXZF_BARK_ICON_DIR", DATA_DIR / "bark-icons"
+))
 PUBLIC_BASE = os.environ.get(
     "XXZF_PUBLIC_BASE", "https://example.com/xxzf"
 ).rstrip("/")
@@ -70,6 +75,7 @@ BARK_BIND_PAGE = os.environ.get(
 PUBLIC_ORIGIN = os.environ.get(
     "XXZF_PUBLIC_ORIGIN", "https://example.com:8443"
 ).rstrip("/")
+BARK_ICON_PUBLIC_BASE = PUBLIC_BASE + "/v1/bark/icons"
 BARK_ENROLLMENT_PUBLIC_ERROR = "绑定码无效、已过期或已使用，请重新生成"
 PAIRING_PUBLIC_ERROR = "配对码无效、已过期或已使用，请重新生成"
 PAIRING_RATE_LIMIT_ERROR = "配对尝试过于频繁，请稍后重试"
@@ -184,23 +190,51 @@ def canonical_https_origin(value):
     return "https://%s%s" % (hostname, "" if port in (None, 443) else ":%d" % port)
 
 
-def configured_bark_allowed_origins():
-    configured = os.environ.get("XXZF_BARK_ALLOWED_ORIGINS", "https://api.day.app")
-    origins = set()
-    for value in configured.split(","):
-        if value.strip():
-            origins.add(canonical_https_origin(value))
-    if not origins:
-        raise RuntimeError("at least one Bark HTTPS origin is required")
-    return frozenset(origins)
+def canonical_bark_base(value):
+    raw = str(value or "").strip().rstrip("/")
+    try:
+        parsed = urllib.parse.urlparse(raw)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("invalid Bark HTTPS base") from exc
+    path = parsed.path.rstrip("/")
+    if (
+        parsed.scheme.lower() != "https"
+        or not parsed.hostname
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.params
+        or parsed.query
+        or parsed.fragment
+        or not re.fullmatch(r"(?:/[A-Za-z0-9._~-]+)*", path)
+    ):
+        raise ValueError("invalid Bark HTTPS base")
+    hostname = parsed.hostname.rstrip(".").lower().encode("idna").decode("ascii")
+    if ":" in hostname:
+        hostname = "[" + hostname + "]"
+    origin = "https://%s%s" % (
+        hostname,
+        "" if port in (None, 443) else ":%d" % port,
+    )
+    return origin + path
 
 
-BARK_ALLOWED_ORIGINS = configured_bark_allowed_origins()
+def configured_bark_allowed_bases():
+    configured = os.environ.get("XXZF_BARK_ALLOWED_BASES")
+    if configured is None:
+        configured = os.environ.get("XXZF_BARK_ALLOWED_ORIGINS", "https://api.day.app")
+    bases = {canonical_bark_base(value) for value in configured.split(",") if value.strip()}
+    if not bases:
+        raise RuntimeError("at least one Bark HTTPS base is required")
+    return frozenset(bases)
+
+
+BARK_ALLOWED_BASES = configured_bark_allowed_bases()
 
 
 def normalize_bark_server(value):
-    origin = canonical_https_origin(value or "https://api.day.app")
-    if origin not in BARK_ALLOWED_ORIGINS:
+    origin = canonical_bark_base(value or "https://api.day.app")
+    if origin not in BARK_ALLOWED_BASES:
         raise ValueError("Bark server is not allowlisted")
     return origin
 
@@ -224,6 +258,7 @@ def load_notify_token(path):
     return token
 
 ensure_private_directory(DATA_DIR)
+ensure_private_directory(BARK_ICON_DIR)
 ensure_private_file(CONFIG_FILE, required=False)
 ensure_private_file(ERROR_LOG, required=False)
 
@@ -402,17 +437,24 @@ def parse_bark_test_url(value):
         raise ValueError("Bark 测试地址无效") from exc
     if (
         parsed.scheme.lower() != "https"
-        or (parsed.hostname or "").lower() != "api.day.app"
+        or not parsed.hostname
         or parsed.username is not None
         or parsed.password is not None
-        or port not in (None, 443)
     ):
-        raise ValueError("仅支持 Bark 官方 HTTPS 测试地址")
+        raise ValueError("仅支持已配置的 Bark HTTPS 测试地址")
     segments = [segment for segment in parsed.path.split("/") if segment]
-    key = urllib.parse.unquote(segments[0]) if segments else ""
-    if not re.fullmatch(r"[A-Za-z0-9_-]{16,200}", key):
-        raise ValueError("Bark 测试地址中的设备凭证无效")
-    return "https://api.day.app", key
+    request_origin = canonical_https_origin("https://" + parsed.netloc)
+    for base in sorted(BARK_ALLOWED_BASES, key=len, reverse=True):
+        base_parsed = urllib.parse.urlparse(base)
+        base_origin = canonical_https_origin("https://" + base_parsed.netloc)
+        base_segments = [segment for segment in base_parsed.path.split("/") if segment]
+        if request_origin != base_origin or segments[:len(base_segments)] != base_segments:
+            continue
+        key_index = len(base_segments)
+        key = urllib.parse.unquote(segments[key_index]) if len(segments) > key_index else ""
+        if re.fullmatch(r"[A-Za-z0-9_-]{16,200}", key):
+            return base, key
+    raise ValueError("Bark 测试地址不受信任或设备凭证无效")
 
 
 def bark_key_fingerprint(device_key):
@@ -625,8 +667,41 @@ def save_config():
     )
 
 
+def valid_bark_icon_png(raw):
+    if not isinstance(raw, bytes):
+        return False
+    if (
+        len(raw) < 32
+        or len(raw) > 48 * 1024
+        or raw[:8] != b"\x89PNG\r\n\x1a\n"
+        or raw[12:16] != b"IHDR"
+        or raw[-8:-4] != b"IEND"
+    ):
+        return False
+    width = int.from_bytes(raw[16:20], "big")
+    height = int.from_bytes(raw[20:24], "big")
+    return 1 <= width <= 256 and 1 <= height <= 256
+
+
+def store_bark_icon(encoded):
+    value = str(encoded or "").strip()
+    if not value or len(value) > 64 * 1024:
+        return ""
+    try:
+        raw = base64.b64decode(value, validate=True)
+    except Exception:
+        return ""
+    if not valid_bark_icon_png(raw):
+        return ""
+    icon_id = hashlib.sha256(raw).hexdigest()
+    path = BARK_ICON_DIR / (icon_id + ".png")
+    if not path.is_file():
+        atomic_write_private(path, raw)
+    return icon_id
+
+
 def normalize_event(data):
-    return {
+    event = {
         "id": bounded_text(data.get("id") or f"{int(time.time() * 1000)}", 256),
         "receivedAt": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "device": bounded_text(data.get("device") or "Android", 160),
@@ -637,6 +712,10 @@ def normalize_event(data):
         "postTime": int(data.get("postTime") or int(time.time() * 1000)),
         "privacyMode": bounded_text(data.get("privacyMode") or "full", 16),
     }
+    icon_id = store_bark_icon(data.get("appIconPng"))
+    if icon_id:
+        event["appIconId"] = icon_id
+    return event
 
 
 def push_event(event, receiver_ids=None, include_legacy=True):
@@ -775,12 +854,17 @@ def send_bark(base, device_key, event):
     source_title = event.get("title") or ""
     body = source_title or "收到一条新通知"
 
-    payload = json.dumps({
+    bark_title = "安卓-" + app if event.get("packageName") else app
+    bark_payload = {
         "device_key": str(device_key),
-        "title": app,
+        "title": bark_title,
         "body": body,
         "group": "转发",
-    }, ensure_ascii=False).encode("utf-8")
+    }
+    icon_id = str(event.get("appIconId") or "").lower()
+    if re.fullmatch(r"[a-f0-9]{64}", icon_id):
+        bark_payload["icon"] = BARK_ICON_PUBLIC_BASE + "/" + icon_id + ".png"
+    payload = json.dumps(bark_payload, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(
         base + "/push",
         data=payload,
@@ -791,6 +875,16 @@ def send_bark(base, device_key, event):
         with urllib.request.urlopen(request, timeout=8) as response:
             raw = response.read(500).decode("utf-8", "replace")
             return {"status": response.status, "body": raw}
+    except urllib.error.HTTPError as exc:
+        # The provider response may reflect the submitted key, so keep it
+        # bounded for classification but never write it to application logs.
+        try:
+            raw = exc.read(500).decode("utf-8", "replace")
+        except Exception:
+            raw = ""
+        finally:
+            exc.close()
+        return {"status": exc.code, "body": raw}
     except Exception:
         # Do not persist arbitrary transport exception details here. Some HTTP
         # clients or test doubles can reflect request data in exception text;
@@ -1174,6 +1268,30 @@ class Handler(BaseHTTPRequestHandler):
             return
         parsed = urllib.parse.urlparse(self.path)
         clean_path = parsed.path
+
+        icon_match = re.fullmatch(
+            r"/api/v1/bark/icons/([a-f0-9]{64})\.png", clean_path
+        )
+        if icon_match:
+            if not rate_allowed(("bark-icon", self.client_ip()), 240):
+                self.send_json(429, {"ok": False, "error": "too many requests"})
+                return
+            icon_path = BARK_ICON_DIR / (icon_match.group(1) + ".png")
+            if not ensure_private_file(icon_path, required=False):
+                self.send_json(404, {"ok": False, "error": "not found"})
+                return
+            raw = icon_path.read_bytes()
+            if not valid_bark_icon_png(raw):
+                self.send_json(404, {"ok": False, "error": "not found"})
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "image/png")
+            self.send_header("Content-Length", str(len(raw)))
+            self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(raw)
+            return
 
         if clean_path == "/api/v1/health":
             if not rate_allowed(("health", self.client_ip()), 120):
